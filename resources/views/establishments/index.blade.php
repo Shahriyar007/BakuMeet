@@ -50,7 +50,11 @@
                         
                         @if ($place->image)
                             <div>
-                                <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
+                                  <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
+                            @else
+                                <div style="width: 150px; height: 150px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                                    {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
+                                </div>
                             </div>
                         @endif
                     </div>

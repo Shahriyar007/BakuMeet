@@ -6,11 +6,13 @@
     <div>
         <a href="/establishments" style="color: #3498db; text-decoration: none;">← Geri Dön</a>
         
-        <div class="card" style="margin-top: 20px;">
-            @if ($establishment->image)
-                <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 20px;">
+                @if ($establishment->image)
                     <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
-                </div>
+                @else
+                    <div style="width: 100%; height: 250px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 72px;">
+                        {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
+                    </div>
             @endif
             
             <h2>{{ $establishment->name }}</h2>
