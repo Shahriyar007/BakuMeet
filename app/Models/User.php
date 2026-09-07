@@ -28,5 +28,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    } public function favorites()
+    {
+        return $this->belongsToMany(Establishment::class, 'favorites')->withTimestamps();
     }
 }

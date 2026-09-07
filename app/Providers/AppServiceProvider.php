@@ -17,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
             EstablishmentRepositoryInterface::class,
             EloquentEstablishmentRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\ReviewRepositoryInterface::class,
+            \App\Repositories\Eloquent\EloquentReviewRepository::class
+        );
     }
 
     /**

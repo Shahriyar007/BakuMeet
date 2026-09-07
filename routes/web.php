@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstablishmentController;
@@ -18,6 +20,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+Route::middleware('auth')->group(function () {
+    Route::post('/establishments/{id}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+   
+    Route::post('/establishments/{id}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 });
 
 require __DIR__.'/auth.php';

@@ -22,4 +22,12 @@ class Establishment extends Model
         'type' => 'string',
         'rating' => 'float',
     ];
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
 }
