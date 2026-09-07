@@ -1,0 +1,61 @@
+@extends('layouts.app')
+
+@section('title', 'İşletmeler - BakuMeet')
+
+@section('content')
+    <div>
+        <h2>İşletmeler Listesi</h2>
+        <!-- FILTRE FORMU -->
+        @if (isset($filter))
+            <p style="color: #27ae60; margin: 15px 0; font-size: 14px;">
+                📌 Filtre: <strong>{{ $filter }}</strong>
+                <a href="/establishments" style="color: #e74c3c;">Filtresi Kaldır</a>
+            </p>
+        @endif
+        
+        @if ($establishments->isEmpty())
+            <div class="card" style="background-color: #fff3cd; border-left: 4px solid #f39c12;">
+                <p>Sonuç bulunamadı.</p>
+            </div>
+        @else
+            @foreach ($establishments as $place)
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h3>{{ $place->name }}</h3>
+                            
+                            <p>
+                                <span class="badge {{ $place->type }}">
+                                    @if ($place->type === 'restaurant')
+                                        🍽️ Restoran
+                                    @elseif ($place->type === 'cafe')
+                                        ☕ Kafe
+                                    @endif
+                                </span>
+                                <span class="badge">📍 {{ $place->location }}</span>
+                                <span class="badge">🎭 {{ $place->mood }}</span>
+                            </p>
+                            
+                            @if ($place->description)
+                                <p><strong>Açıklama:</strong> {{ Str::limit($place->description, 100) }}</p>
+                            @endif
+                            
+                            <p>
+                                <strong>Puanı:</strong> 
+                                <span class="rating">⭐ {{ $place->rating ?? 'Henüz puanlanmamış' }}</span>
+                            </p>
+                            
+                            <a href="/establishments/{{ $place->id }}" class="btn">Detaylar</a>
+                        </div>
+                        
+                        @if ($place->image)
+                            <div>
+                                <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>
+@endsection
