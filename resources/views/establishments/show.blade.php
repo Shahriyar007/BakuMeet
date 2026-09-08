@@ -48,7 +48,7 @@
             <h3 style="margin-top: 20px; margin-bottom: 10px;">Açıklama</h3>
             <p>{{ $establishment->description ?? 'Açıklama bulunmamaktadır.' }}</p>
             
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">Konum Bilgileri</h3>
+<h3 style="margin-top: 20px; margin-bottom: 10px;">Konum Bilgileri</h3>
             <p>
                 <strong>Semt:</strong> {{ $establishment->location }}<br>
                 @if ($establishment->latitude && $establishment->longitude)
@@ -57,6 +57,43 @@
                     <em>Koordinatlar henüz eklenmemiş.</em>
                 @endif
             </p>
+
+            <h3 style="margin-top: 20px; margin-bottom: 10px;">🕒 Çalışma Saatleri</h3>
+            @if ($establishment->opening_hours)
+                @php
+                    $dayNames = [
+                        'monday' => 'Pazartesi', 'tuesday' => 'Salı', 'wednesday' => 'Çarşamba',
+                        'thursday' => 'Perşembe', 'friday' => 'Cuma', 'saturday' => 'Cumartesi', 'sunday' => 'Pazar',
+                    ];
+                    $isOpen = $establishment->isOpenNow();
+                @endphp
+
+                <p style="margin-bottom: 10px;">
+                    @if ($isOpen === true)
+                        <span class="badge" style="background-color: #2ecc71; color: white;">🟢 Şu an açık</span>
+                    @elseif ($isOpen === false)
+                        <span class="badge" style="background-color: #e74c3c; color: white;">🔴 Şu an kapalı</span>
+                    @endif
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse;">
+                    @foreach ($dayNames as $key => $label)
+                        @php $day = $establishment->opening_hours[$key] ?? null; @endphp
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 6px 0;">{{ $label }}</td>
+                            <td style="padding: 6px 0; text-align: right;">
+                                @if (!$day || ($day['closed'] ?? false))
+                                    <span style="color: #999;">Kapalı</span>
+                                @else
+                                    {{ $day['open'] }} - {{ $day['close'] }}
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+            @else
+                <p style="color: #999;"><em>Çalışma saatleri henüz eklenmedi.</em></p>
+            @endif
         </div>
     </div>
 <!-- YORUMLAR BÖLÜMÜ -->

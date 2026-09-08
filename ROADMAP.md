@@ -24,6 +24,12 @@ sonraki özelliğin (Wizard, Explore by Area) temeli.
 Yeni alan: opening_hours. Fayda: kapalı bir yere yönlendirme riskini
 ortadan kaldırır — "nereye gideyim" sorusunun en kritik parçası.
 Zorluk: Medium — Katkı: High
+## FAZ 7b — İşletme Sahibi Paneli (Owner Dashboard) ⭐
+İşletme sahiplerinin kendi mekanlarını yönetebileceği panel: çalışma
+saatleri (opening_hours), fotoğraf, açıklama güncelleme. Faz 7'de
+altyapı (opening_hours alanı + gösterim) hazırlandı, gerçek veri
+girişi burada olacak. Rol sistemi (owner/admin) gerektirir.
+Zorluk: Medium-Hard — Katkı: High (gerçek veri kaynağı)
 
 ## FAZ 8 — Tags / Özellikler ⭐
 Wi-Fi, Laptop Friendly, Outdoor, Live Music, Open Late, Pet Friendly,

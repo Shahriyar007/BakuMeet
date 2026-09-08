@@ -60,6 +60,12 @@
                             @endif
                         </span>
                         <span class="badge">📍 {{ $place->location }}</span>
+                        <span class="badge">🎭 {{ $place->mood }}</span>
+                         @if ($place->statusText())
+                            <span class="badge" style="background-color: {{ $place->isOpenNow() ? '#2ecc71' : '#e74c3c' }}; color: white;">
+                                {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
+                            </span>
+                        @endif
                     </p>
                     <p><span class="rating">⭐ {{ $place->rating }}</span></p>
                     <a href="/establishments/{{ $place->id }}" class="btn">Detaylar</a>

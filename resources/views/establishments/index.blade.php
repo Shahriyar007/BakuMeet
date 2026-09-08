@@ -80,7 +80,12 @@
                                 <span class="badge">📍 {{ $place->location }}</span>
                                 <span class="badge">🎭 {{ $place->mood }}</span>
                                 <span class="badge">{{ str_repeat('₼', $place->price_range) }}</span>
-                            </p>
+                                @if ($place->statusText())
+                                    <span class="badge" style="background-color: {{ $place->isOpenNow() ? '#2ecc71' : '#e74c3c' }}; color: white;">
+                                        {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
+                                    </span>
+                                @endif 
+  </p>
 
                             @if ($place->description)
                                 <p><strong>Açıklama:</strong> {{ Str::limit($place->description, 100) }}</p>
