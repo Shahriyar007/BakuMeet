@@ -161,5 +161,6 @@
     <footer>
         <p>&copy; 2026 BakuMeet. Tüm hakları saklıdır.</p>
     </footer>
+@stack('scripts')
 </body>
 </html>

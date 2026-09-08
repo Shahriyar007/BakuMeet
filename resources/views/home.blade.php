@@ -74,6 +74,32 @@
     <div style="text-align: center; margin: 20px 0;">
         <a href="/establishments" class="btn">Tüm İşletmeleri Gör →</a>
     </div>
+      
+     <!-- KOLEKSİYONLAR ÖNİZLEME -->
+    <h2 style="margin-bottom: 15px;">📚 Koleksiyonlar</h2>
+    @foreach ($collections as $collection)
+        <a href="/collections/{{ $collection->id }}" style="text-decoration: none;">
+            <div class="card">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="font-size: 32px;">{{ $collection->emoji }}</div>
+                    <div>
+                        <h3 style="font-size: 16px;">{{ $collection->title }}</h3>
+                        <p style="color: #999; font-size: 12px;">{{ $collection->establishments->count() }} mekan</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    @endforeach
+    <div style="text-align: center; margin: 15px 0 25px;">
+        <a href="/collections" class="btn">Tüm Koleksiyonları Gör →</a>
+    </div>
+
+    <!-- MİNİ HARİTA -->
+    <h2 style="margin-bottom: 15px;">🗺️ Haritada Keşfet</h2>
+    <div id="home-map" style="height: 250px; border-radius: 8px; margin-bottom: 10px;"></div>
+    <div style="text-align: center; margin-bottom: 25px;">
+        <a href="/establishments/map/view" class="btn">Tam Haritayı Aç →</a>
+    </div>
 
     <!-- İSTATİSTİK ŞERİDİ -->
     <div class="card" style="display: flex; justify-content: space-around; text-align: center;">
@@ -91,3 +117,24 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const homeMap = L.map('home-map').setView([40.3777, 49.8920], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap katkıda bulunanlar'
+    }).addTo(homeMap);
+
+    const homeMapData = @json($mapData);
+    homeMapData.forEach(function(place) {
+        const color = place.type === 'restaurant' ? 'red' : 'green';
+        const icon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>`,
+            iconSize: [16, 16]
+        });
+        L.marker([place.latitude, place.longitude], { icon: icon }).addTo(homeMap).bindPopup(place.name);
+    });
+</script>
+@endpush
