@@ -30,4 +30,8 @@ class Establishment extends Model
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class, 'collection_establishment');
+    }
 }

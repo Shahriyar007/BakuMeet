@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
@@ -15,6 +16,9 @@ Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
 Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');
 Route::get('/filter', [EstablishmentController::class, 'filterByLocationAndMood'])->name('establishments.filter');
+
+Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
+Route::get('/collections/{id}', [CollectionController::class, 'show'])->name('collections.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
