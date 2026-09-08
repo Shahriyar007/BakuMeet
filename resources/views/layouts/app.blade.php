@@ -128,7 +128,8 @@
         <a href="/establishments">Tüm İşletmeler</a>
         <a href="/establishments/map/view">🗺️ Harita</a>
         <a href="/collections">📚 Koleksiyonlar</a>
-              @auth
+        <a href="/nearby">📍 Yakınımdakiler</a>
+       @auth
             <a href="/favorites">❤️ Favorilerim</a>
             <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Çıkış Yap</a>
             <form id="logout-form" action="/logout" method="POST" style="display: none;">
