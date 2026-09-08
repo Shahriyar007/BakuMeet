@@ -58,4 +58,9 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
     {
         return $this->model->where('mood', $mood)->get();
     }
+   public function getFeatured(int $limit = 6)
+    {
+        return $this->model->orderBy('rating', 'desc')->limit($limit)->get();
+    }
+
 }

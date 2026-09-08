@@ -1,17 +1,21 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstablishmentController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::get('/establishments', [EstablishmentController::class, 'index']);
 Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
+Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');
+Route::get('/filter', [EstablishmentController::class, 'filterByLocationAndMood'])->name('establishments.filter');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

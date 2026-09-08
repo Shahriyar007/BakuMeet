@@ -19,4 +19,6 @@ interface EstablishmentRepositoryInterface
     public function filterByLocation(string $location);
     
     public function filterByMood(string $mood);
+    
+    public function getFeatured(int $limit = 6);
 }

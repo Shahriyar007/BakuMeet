@@ -75,5 +75,10 @@ class EstablishmentService
     {
         return $this->repository->filterByMood($mood);
     }
+
+    public function getFeatured(int $limit = 6)
+    {
+        return $this->repository->getFeatured($limit);
+    }
 }
 
