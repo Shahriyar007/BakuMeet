@@ -21,4 +21,6 @@ interface EstablishmentRepositoryInterface
     public function filterByMood(string $mood);
     
     public function getFeatured(int $limit = 6);
+
+    public function filterByPriceRange(int $priceRange);
 }

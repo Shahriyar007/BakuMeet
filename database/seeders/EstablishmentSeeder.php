@@ -128,7 +128,16 @@ class EstablishmentSeeder extends Seeder
             ],
         ];
 
+        $priceByMood = [
+            'lüks' => 3,
+            'romantik' => 3,
+            'canlı' => 2,
+            'sakin' => 2,
+            'bütçedostu' => 1,
+        ];
+
         foreach ($data as $item) {
+            $item['price_range'] = $priceByMood[$item['mood']] ?? 2;
             Establishment::create($item);
         }
     }

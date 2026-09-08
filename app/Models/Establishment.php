@@ -12,6 +12,7 @@ class Establishment extends Model
         'description',
         'location',
         'mood',
+        'price_range',
         'image',
         'latitude',
         'longitude',

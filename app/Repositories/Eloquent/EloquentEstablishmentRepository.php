@@ -63,4 +63,8 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
         return $this->model->orderBy('rating', 'desc')->limit($limit)->get();
     }
 
+   public function filterByPriceRange(int $priceRange)
+    {
+        return $this->model->where('price_range', $priceRange)->get();
+    }
 }

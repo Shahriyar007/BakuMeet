@@ -49,39 +49,38 @@ class EstablishmentController extends Controller
     /**
      * Konum ve mood'a göre filtrele
      */
-    public function filterByLocationAndMood(Request $request)
-   {
-$location = $request->query('location');
+
+     public function filterByLocationAndMood(Request $request)
+    {
+        $location = $request->query('location');
         $mood = $request->query('mood');
+        $priceRange = $request->query('price_range');
 
-        $establishments = collect(); // Boş collection başlat
-        $filterText = '';
+        $establishments = $this->service->getAllEstablishments();
+        $filterParts = [];
 
-        // Sadece location filtresi
-        if ($location && !$mood) {
-            $establishments = $this->service->filterByLocation($location);
-            $filterText = "📍 {$location}";
+        if ($location) {
+            $establishments = $establishments->where('location', $location);
+            $filterParts[] = "📍 {$location}";
         }
-        // Sadece mood filtresi
-        elseif ($mood && !$location) {
-            $establishments = $this->service->filterByMood($mood);
-            $filterText = "🎭 {$mood}";
+
+        if ($mood) {
+            $establishments = $establishments->where('mood', $mood);
+            $filterParts[] = "🎭 {$mood}";
         }
-        // Her ikisi de
-        elseif ($location && $mood) {
-            $establishments = $this->service->filterByLocationAndMood($location, $mood);
-            $filterText = "📍 {$location} + 🎭 {$mood}";
-        }
-        // Hiçbiri değilse tümünü göster
-        else {
-            $establishments = $this->service->getAllEstablishments();
+
+        if ($priceRange) {
+            $establishments = $establishments->where('price_range', $priceRange);
+            $filterParts[] = str_repeat('₼', $priceRange);
         }
 
         return view('establishments.index', [
-            'establishments' => $establishments,
-            'filter' => $filterText ?: null
+            'establishments' => $establishments->values(),
+            'filter' => $filterParts ? implode(' + ', $filterParts) : null
         ]);
-}/**
+    }
+
+/**
      * Harita sayfasını göster
      */
     public function map()
