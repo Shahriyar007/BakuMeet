@@ -51,11 +51,6 @@
 <h3 style="margin-top: 20px; margin-bottom: 10px;">Konum Bilgileri</h3>
             <p>
                 <strong>Semt:</strong> {{ $establishment->location }}<br>
-                @if ($establishment->latitude && $establishment->longitude)
-                    <strong>Koordinatlar:</strong> {{ $establishment->latitude }}, {{ $establishment->longitude }}
-                @else
-                    <em>Koordinatlar henüz eklenmemiş.</em>
-                @endif
             </p>
 
             <h3 style="margin-top: 20px; margin-bottom: 10px;">🕒 Çalışma Saatleri</h3>
@@ -94,6 +89,16 @@
             @else
                 <p style="color: #999;"><em>Çalışma saatleri henüz eklenmedi.</em></p>
             @endif
+
+            @if ($establishment->latitude && $establishment->longitude)
+                <h3 style="margin-top: 20px; margin-bottom: 10px;">🗺️ Haritada Konum</h3>
+                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $establishment->latitude }},{{ $establishment->longitude }}" target="_blank">
+                    <img src="https://staticmap.openstreetmap.de/staticmap.php?center={{ $establishment->latitude }},{{ $establishment->longitude }}&zoom=15&size=500x250&markers={{ $establishment->latitude }},{{ $establishment->longitude }},red-pushpin"
+                         alt="{{ $establishment->name }} konumu"
+                         style="width: 100%; max-width: 500px; border-radius: 8px; display: block; margin: 0 auto;">
+                </a>
+                <p style="text-align: center; margin-top: 6px; font-size: 13px; color: #999;">📍 Yol tarifi almak için haritaya dokun</p>
+             @endif
         </div>
     </div>
 <!-- YORUMLAR BÖLÜMÜ -->
