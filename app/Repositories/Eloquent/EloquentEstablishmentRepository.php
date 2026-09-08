@@ -67,4 +67,12 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
     {
         return $this->model->where('price_range', $priceRange)->get();
     }
+
+   public function getAllWithCoordinates(): \Illuminate\Support\Collection
+    {
+        return $this->model->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+    }
+
 }

@@ -23,4 +23,6 @@ interface EstablishmentRepositoryInterface
     public function getFeatured(int $limit = 6);
 
     public function filterByPriceRange(int $priceRange);
+
+    public function getAllWithCoordinates(): \Illuminate\Support\Collection;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use App\Repositories\Contracts\EstablishmentRepositoryInterface;
 
 class EstablishmentService
@@ -80,5 +81,35 @@ class EstablishmentService
     {
         return $this->repository->getFeatured($limit);
     }
+
+    public function findNearby(float $lat, float $lng, float $radiusKm = 5, ?string $type = null, ?string $mood = null): Collection
+{
+    $establishments = $this->repository->getAllWithCoordinates();
+
+    if ($type) {
+        $establishments = $establishments->where('type', $type);
+    }
+    if ($mood) {
+        $establishments = $establishments->where('mood', $mood);
+    }
+
+    return $establishments->map(function ($e) use ($lat, $lng) {
+            $e->distance_km = $this->haversine($lat, $lng, $e->latitude, $e->longitude);
+            return $e;
+        })
+        ->filter(fn ($e) => $e->distance_km <= $radiusKm)
+        ->sortBy('distance_km')
+        ->values();
+}
+
+    private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
+{
+    $earthRadius = 6371; // km
+    $dLat = deg2rad($lat2 - $lat1);
+    $dLng = deg2rad($lng2 - $lng1);
+    $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    return round($earthRadius * $c, 2);
+}
 }
 

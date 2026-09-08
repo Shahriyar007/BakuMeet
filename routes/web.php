@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NearbyController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
@@ -13,6 +14,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/establishments', [EstablishmentController::class, 'index']);
 Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);
+Route::get('/nearby', [NearbyController::class, 'index'])->name('nearby.index');
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
 Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');
 Route::get('/filter', [EstablishmentController::class, 'filterByLocationAndMood'])->name('establishments.filter');
@@ -36,5 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/establishments/{id}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 });
+
+Route::get('/nearby', [NearbyController::class, 'index'])->name('nearby.index');
 
 require __DIR__.'/auth.php';
