@@ -18,22 +18,50 @@ class ReviewController extends Controller
     {
         $request->validate([
             'comment' => 'required|string|max:500',
-            'rating' => 'required|integer|min:1|max:5',
+            'atmosphere_rating' => 'required|integer|min:1|max:5',
+            'food_rating' => 'required|integer|min:1|max:5',
+            'service_rating' => 'required|integer|min:1|max:5',
+            'value_rating' => 'required|integer|min:1|max:5',
         ]);
 
-        $this->service->createReview([
+        $overallRating = round((
+            $request->atmosphere_rating +
+            $request->food_rating +
+            $request->service_rating +
+            $request->value_rating
+        ) / 4);
+       $this->service->createReview([
             'user_id' => auth()->id(),
             'establishment_id' => $establishmentId,
             'comment' => $request->comment,
-            'rating' => $request->rating,
+            'rating' => $overallRating,
+            'atmosphere_rating' => $request->atmosphere_rating,
+            'food_rating' => $request->food_rating,
+            'service_rating' => $request->service_rating,
+            'value_rating' => $request->value_rating,
         ]);
+
+        $establishment = \App\Models\Establishment::find($establishmentId);
+        $establishment->rating = round($establishment->reviews()->avg('rating'), 1);
+        $establishment->save();
 
         return redirect("/establishments/{$establishmentId}")->with('success', 'Yorumunuz eklendi!');
     }
 
     public function destroy(int $id)
     {
+        $review = \App\Models\Review::find($id);
+        $establishmentId = $review?->establishment_id;
+
         $this->service->deleteReview($id);
+
+        if ($establishmentId) {
+            $establishment = \App\Models\Establishment::find($establishmentId);
+            $newRating = $establishment->reviews()->avg('rating');
+            $establishment->rating = $newRating ? round($newRating, 1) : 0;
+            $establishment->save();
+        }
+
         return back()->with('success', 'Yorum silindi.');
     }
 }

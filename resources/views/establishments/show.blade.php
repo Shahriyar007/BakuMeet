@@ -109,11 +109,41 @@
             <h3>💬 Yorumlar</h3>
             
             @auth
-                <form action="/establishments/{{ $establishment->id }}/reviews" method="POST" style="margin: 15px 0; display: grid; gap: 10px;">
+<form action="/establishments/{{ $establishment->id }}/reviews" method="POST" style="margin: 15px 0; display: grid; gap: 10px;">
                     @csrf
                     <div>
-                        <label><strong>Puan (1-5):</strong></label><br>
-                        <select name="rating" required style="padding: 8px; width: 100%;">
+                        <label><strong>🎭 Atmosfer:</strong></label><br>
+                        <select name="atmosphere_rating" required style="padding: 8px; width: 100%;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label><strong>🍽️ Yemek/Ürün:</strong></label><br>
+                        <select name="food_rating" required style="padding: 8px; width: 100%;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label><strong>🙋 Servis:</strong></label><br>
+                        <select name="service_rating" required style="padding: 8px; width: 100%;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label><strong>💰 Fiyat/Performans:</strong></label><br>
+                        <select name="value_rating" required style="padding: 8px; width: 100%;">
                             <option value="5">⭐⭐⭐⭐⭐ (5)</option>
                             <option value="4">⭐⭐⭐⭐ (4)</option>
                             <option value="3">⭐⭐⭐ (3)</option>
@@ -128,20 +158,28 @@
                     <button type="submit" style="padding: 10px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
                         Yorum Ekle
                     </button>
-                </form>
-            @else
-                <p style="margin: 15px 0;">
+                </form> 
+        
+			@else
+                              <p style="margin: 15px 0;">
                     Yorum yazmak için <a href="/login">giriş yapın</a>.
                 </p>
             @endauth
             
-            @forelse ($establishment->reviews as $review)
+              @forelse ($establishment->reviews as $review)
                 <div style="border-top: 1px solid #eee; padding: 15px 0;">
                     <strong>{{ $review->user->name }}</strong>
-                    <span class="rating">{{ str_repeat('⭐', $review->rating) }}</span>
+                    <span class="rating">{{ str_repeat('⭐', $review->rating) }} ({{ $review->rating }}/5)</span>
+                    @if ($review->atmosphere_rating)
+                        <p style="font-size: 12px; color: #999; margin-top: 4px;">
+                            🎭 Atmosfer: {{ $review->atmosphere_rating }} ·
+                            🍽️ Yemek: {{ $review->food_rating }} ·
+                            🙋 Servis: {{ $review->service_rating }} ·
+                            💰 Fiyat: {{ $review->value_rating }}
+                        </p>
+                    @endif
                     <p style="margin-top: 5px;">{{ $review->comment }}</p>
-                    <small style="color: #999;">{{ $review->created_at->diffForHumans() }}</small>
-                    
+                    <small style="color: #999;">{{ $review->created_at->diffForHumans() }}</small>                    
                     @auth
                         @if (auth()->id() === $review->user_id)
                             <form action="/reviews/{{ $review->id }}" method="POST" style="display: inline;">
