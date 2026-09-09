@@ -129,6 +129,7 @@
         <a href="/establishments/map/view">🗺️ Harita</a>
         <a href="/collections">📚 Koleksiyonlar</a>
         <a href="/nearby">📍 Yakınımdakiler</a>
+	<a href="/areas">🗺️ Bölgeler</a>
        @auth
             <a href="/favorites">❤️ Favorilerim</a>
             <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Çıkış Yap</a>
