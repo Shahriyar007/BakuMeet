@@ -82,4 +82,9 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
         })->get();
     }
 
+   public function getAllWithCounts(): \Illuminate\Support\Collection
+    {
+        return $this->model->withCount(['reviews', 'favoritedBy'])->get();
+    }
+
 }

@@ -17,6 +17,7 @@ Route::get('/establishments', [EstablishmentController::class, 'index']);
 Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);
 Route::get('/nearby', [NearbyController::class, 'index'])->name('nearby.index');
 Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
+Route::get('/trending', [EstablishmentController::class, 'trending'])->name('establishments.trending');
 Route::get('/areas/{location}', [AreaController::class, 'show'])->name('areas.show');
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
 Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');

@@ -107,6 +107,18 @@ class EstablishmentService
         ->values();
 }
 
+     public function getTrending(int $limit = 10)
+    {
+        return $this->repository->getAllWithCounts()
+            ->map(function ($e) {
+                $e->trending_score = ($e->rating * 2) + ($e->reviews_count * 0.5) + ($e->favorited_by_count * 1);
+                return $e;
+            })
+            ->sortByDesc('trending_score')
+            ->take($limit)
+            ->values();
+    }
+
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km

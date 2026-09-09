@@ -130,7 +130,8 @@
         <a href="/collections">📚 Koleksiyonlar</a>
         <a href="/nearby">📍 Yakınımdakiler</a>
 	<a href="/areas">🗺️ Bölgeler</a>
-       @auth
+        <a href="/trending">🔥 Trend</a>
+	@auth
             <a href="/favorites">❤️ Favorilerim</a>
             <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Çıkış Yap</a>
             <form id="logout-form" action="/logout" method="POST" style="display: none;">

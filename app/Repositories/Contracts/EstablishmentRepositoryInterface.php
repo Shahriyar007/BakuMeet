@@ -27,4 +27,6 @@ interface EstablishmentRepositoryInterface
     public function getAllWithCoordinates(): \Illuminate\Support\Collection;
 
     public function filterByTag(int $tagId): \Illuminate\Support\Collection;
+
+    public function getAllWithCounts(): \Illuminate\Support\Collection;
 }

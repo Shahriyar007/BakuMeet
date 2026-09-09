@@ -117,4 +117,11 @@ class EstablishmentController extends Controller
 
         return view('establishments.map', ['mapData' => $mapData]);
     }
+
+     public function trending()
+    {
+        $establishments = $this->service->getTrending(10);
+        return view('establishments.trending', ['establishments' => $establishments]);
+    }
+
 }
