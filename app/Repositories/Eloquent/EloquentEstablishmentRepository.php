@@ -75,4 +75,11 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
             ->get();
     }
 
+   public function filterByTag(int $tagId): \Illuminate\Support\Collection
+    {
+        return $this->model->whereHas('tags', function ($query) use ($tagId) {
+            $query->where('tags.id', $tagId);
+        })->get();
+    }
+
 }

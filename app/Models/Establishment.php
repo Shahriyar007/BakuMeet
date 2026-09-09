@@ -42,6 +42,11 @@ class Establishment extends Model
         return $this->belongsToMany(Collection::class, 'collection_establishment');
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'establishment_tag');
+    }
+
     public function isOpenNow(): ?bool
     {
         if (empty($this->opening_hours)) {

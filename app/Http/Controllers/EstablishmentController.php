@@ -55,6 +55,7 @@ class EstablishmentController extends Controller
         $location = $request->query('location');
         $mood = $request->query('mood');
         $priceRange = $request->query('price_range');
+        $tagId = $request->query('tag');
 
         $establishments = $this->service->getAllEstablishments();
         $filterParts = [];
@@ -72,6 +73,16 @@ class EstablishmentController extends Controller
         if ($priceRange) {
             $establishments = $establishments->where('price_range', $priceRange);
             $filterParts[] = str_repeat('₼', $priceRange);
+        }
+
+        if ($tagId) {
+            $establishments = $establishments->filter(function ($e) use ($tagId) {
+                return $e->tags->contains('id', (int) $tagId);
+            });
+            $tagName = \App\Models\Tag::find($tagId)?->name;
+            if ($tagName) {
+                $filterParts[] = "🏷️ {$tagName}";
+            }
         }
 
         return view('establishments.index', [

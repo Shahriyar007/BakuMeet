@@ -45,6 +45,16 @@
                     </select>
                 </div>
 
+      		<div>
+                    <label for="tag"><strong>Özellik:</strong></label><br>
+                    <select name="tag" id="tag" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
+                        <option value="">-- Tümü --</option>
+                        @foreach (\App\Models\Tag::all() as $tagOption)
+                            <option value="{{ $tagOption->id }}">{{ $tagOption->emoji }} {{ $tagOption->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <button type="submit" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">
                     🔍 Filtrele
                 </button>
@@ -82,7 +92,10 @@
                                 <span class="badge">{{ str_repeat('₼', $place->price_range) }}</span>
                                 @if ($place->statusText())
                                     <span class="badge" style="background-color: {{ $place->isOpenNow() ? '#2ecc71' : '#e74c3c' }}; color: white;">
-                                        {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
+                                    @foreach ($place->tags as $tag)
+                                    <span class="badge">{{ $tag->emoji }} {{ $tag->name }}</span>
+                                @endforeach
+    {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
                                     </span>
                                 @endif 
   </p>

@@ -82,6 +82,11 @@ class EstablishmentService
         return $this->repository->getFeatured($limit);
     }
 
+    public function filterByTag(int $tagId)
+    {
+        return $this->repository->filterByTag($tagId);
+    }
+
     public function findNearby(float $lat, float $lng, float $radiusKm = 5, ?string $type = null, ?string $mood = null): Collection
 {
     $establishments = $this->repository->getAllWithCoordinates();

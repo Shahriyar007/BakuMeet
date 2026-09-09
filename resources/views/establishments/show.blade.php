@@ -38,7 +38,10 @@
                 </span>
                 <span class="badge">📍 {{ $establishment->location }}</span>
                 <span class="badge">🎭 {{ $establishment->mood }}</span>
-            </div>
+                @foreach ($establishment->tags as $tag)
+                    <span class="badge">{{ $tag->emoji }} {{ $tag->name }}</span>
+                @endforeach
+  		</div>
             
             <p style="margin: 15px 0; font-size: 16px;">
                 <strong>Puanı:</strong> 
