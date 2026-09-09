@@ -25,4 +25,10 @@ class WizardController extends Controller
 
         return view('wizard.results', ['establishments' => $establishments, 'answers' => $answers]);
     }
+
+   public function surprise()
+    {
+        $establishment = $this->service->getSurpriseMe();
+        return view('wizard.surprise', ['establishment' => $establishment]);
+    }
 }

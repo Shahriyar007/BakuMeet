@@ -160,6 +160,28 @@ class EstablishmentService
         ->values();
     }
 
+    public function getSurpriseMe()
+    {
+        $establishments = $this->repository->getAllWithCounts();
+
+        if ($establishments->isEmpty()) {
+            return null;
+        }
+
+        $totalWeight = $establishments->sum(fn ($e) => max($e->rating, 0.5));
+        $random = mt_rand() / mt_getrandmax() * $totalWeight;
+
+        $cumulative = 0;
+        foreach ($establishments as $e) {
+            $cumulative += max($e->rating, 0.5);
+            if ($random <= $cumulative) {
+                return $e;
+            }
+        }
+
+        return $establishments->last();
+    }
+
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km
