@@ -31,4 +31,11 @@ class WizardController extends Controller
         $establishment = $this->service->getSurpriseMe();
         return view('wizard.surprise', ['establishment' => $establishment]);
     }
+
+   public function similarToFavorites()
+    {
+        $establishments = $this->service->getSimilarToFavorites(auth()->user());
+        return view('wizard.similar', ['establishments' => $establishments]);
+    }
+
 }

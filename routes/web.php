@@ -22,6 +22,7 @@ Route::get('/trending', [EstablishmentController::class, 'trending'])->name('est
 Route::get('/wizard', [WizardController::class, 'index'])->name('wizard.index');
 Route::get('/wizard/results', [WizardController::class, 'results'])->name('wizard.results');
 Route::get('/surprise', [WizardController::class, 'surprise'])->name('wizard.surprise');
+Route::get('/for-you', [WizardController::class, 'similarToFavorites'])->middleware('auth')->name('wizard.similar');
 Route::get('/areas/{location}', [AreaController::class, 'show'])->name('areas.show');
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
 Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');

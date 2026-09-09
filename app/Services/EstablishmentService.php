@@ -182,6 +182,42 @@ class EstablishmentService
         return $establishments->last();
     }
 
+     public function getSimilarToFavorites(\App\Models\User $user, int $limit = 5)
+    {
+        $favorites = $user->favorites;
+
+        if ($favorites->isEmpty()) {
+            return collect();
+        }
+
+        $favoriteMoods = $favorites->pluck('mood')->countBy();
+        $favoriteTagIds = $favorites->flatMap(fn ($e) => $e->tags->pluck('id'))->countBy();
+        $favoriteIds = $favorites->pluck('id');
+
+        $candidates = $this->repository->all()->whereNotIn('id', $favoriteIds);
+
+        return $candidates->map(function ($e) use ($favoriteMoods, $favoriteTagIds) {
+                $score = 0;
+
+                if (isset($favoriteMoods[$e->mood])) {
+                    $score += $favoriteMoods[$e->mood] * 2;
+                }
+
+                foreach ($e->tags as $tag) {
+                    if (isset($favoriteTagIds[$tag->id])) {
+                        $score += $favoriteTagIds[$tag->id];
+                    }
+                }
+
+                $e->similarity_score = $score;
+                return $e;
+            })
+            ->filter(fn ($e) => $e->similarity_score > 0)
+            ->sortByDesc('similarity_score')
+            ->take($limit)
+            ->values();
+    }
+
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km

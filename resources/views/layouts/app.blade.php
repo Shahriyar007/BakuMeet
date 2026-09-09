@@ -135,6 +135,7 @@
 	<a href="/surprise">🎲 Sürpriz Bana</a>
 	@auth
             <a href="/favorites">❤️ Favorilerim</a>
+            <a href="/for-you">💡 Senin İçin</a>
             <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Çıkış Yap</a>
             <form id="logout-form" action="/logout" method="POST" style="display: none;">
                 @csrf
