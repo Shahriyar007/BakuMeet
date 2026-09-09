@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WizardController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\NearbyController;
 use App\Http\Controllers\CollectionController;
@@ -18,6 +19,8 @@ Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);
 Route::get('/nearby', [NearbyController::class, 'index'])->name('nearby.index');
 Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
 Route::get('/trending', [EstablishmentController::class, 'trending'])->name('establishments.trending');
+Route::get('/wizard', [WizardController::class, 'index'])->name('wizard.index');
+Route::get('/wizard/results', [WizardController::class, 'results'])->name('wizard.results');
 Route::get('/areas/{location}', [AreaController::class, 'show'])->name('areas.show');
 Route::get('/establishments/map/view', [EstablishmentController::class, 'map']);
 Route::get('/establishments-by-type/{type}', [EstablishmentController::class, 'filterByType'])->name('establishments.filterByType');

@@ -119,6 +119,47 @@ class EstablishmentService
             ->values();
     }
 
+     public function getWizardRecommendations(array $answers, int $limit = 5)
+    {
+        $establishments = $this->repository->getAllWithCounts();
+
+        return $establishments->map(function ($e) use ($answers) {
+            $score = 0;
+
+            if (!empty($answers['mood']) && $e->mood === $answers['mood']) {
+                $score += 3;
+            }
+
+            if (!empty($answers['price_range']) && (int) $e->price_range === (int) $answers['price_range']) {
+                $score += 2;
+            }
+
+            if (!empty($answers['location']) && $e->location === $answers['location']) {
+                $score += 2;
+            }
+
+            if (!empty($answers['tag_id']) && $e->tags->contains('id', (int) $answers['tag_id'])) {
+                $score += 2;
+            }
+
+            if (!empty($answers['lat']) && !empty($answers['lng']) && $e->latitude && $e->longitude) {
+                $distance = $this->haversine((float) $answers['lat'], (float) $answers['lng'], $e->latitude, $e->longitude);
+                $e->distance_km = $distance;
+                if ($distance <= 3) {
+                    $score += 2;
+                } elseif ($distance <= 7) {
+                    $score += 1;
+                }
+            }
+
+            $e->wizard_score = $score;
+            return $e;
+        })
+        ->sortByDesc('wizard_score')
+        ->take($limit)
+        ->values();
+    }
+
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km
