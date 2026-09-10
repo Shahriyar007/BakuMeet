@@ -2,7 +2,11 @@
 
 Faz 6e-18 (keşif/öneri/sosyal özellikler) tamamlandı ve canlıda.
 Bundan sonraki hedef: yeni özellik değil, ürünü sağlamlaştırmak,
-sonra iş modeline (işletme paneli + görünürlük satışı) geçmek.
+sonra iş modeline (işletme paneli) geçmek.
+
+Prensip: her zamanki gibi önce özellik/fonksiyon, sonra tasarım.
+Bu yüzden Owner Dashboard da mevcut sade stille, organik/adım adım
+inşa edilecek — redesign EN SONA, her şey bittikten sonra yapılacak.
 
 ## AŞAMA A — Stabilizasyon (yeni özellik YOK)
 
@@ -27,53 +31,55 @@ review create/delete, auth, yetkisiz kullanıcı review/favorite yapamaz.
 3. Kayıt → Giriş → Review → Favori → Senin İçin
 Takılma/gereksiz tıklama varsa mevcut tasarımla (renk değişmeden) düzelt.
 
-## AŞAMA B — Redesign'e Hazırlık
+## AŞAMA B — Gerçek İçerik
 
 ### B1 — Kısmi Gerçek İçerik (15-20 mekan)
-Redesign'i düzgün seed veriyle değil, gerçek/düzensiz veriyle (uzun
-isim, eksik foto, farklı tag sayısı, farklı saat) yapmak daha sağlam
-sonuç verir. 30-50'ye tamamlamadan önce ilk 15-20 gerçek mekanı ekle.
+Uydurma seed veri yerine gerçek Bakü mekanları: isim, konum, saat,
+fiyat, foto, tag. 30-50'ye tamamlamadan önce ilk 15-20 tanesi.
 
-### B2 — Blade Component Temizliği
-Establishment kartı ~9 view dosyasında (home, index, trending, wizard/
-results, wizard/similar, compare, areas/show, surprise, weather) kopya
-HTML olarak duruyor. Redesign'den önce tek bir <x-establishment-card>
-component'ine çıkar — tema değişikliği tek dosyadan yapılabilsin.
+## AŞAMA C — Gerçek İş Modeli Altyapısı (organik, sade stille)
 
-## 🎨 AŞAMA C — Tasarım Yenileme (UI/UX Redesign)
-A ve B bitince yapılır. Tasarımın kendisi ayrı AI'larla hazırlanacak,
-implementasyon burada yapılacak. Owner Dashboard'dan ÖNCE olmalı —
-yoksa dashboard iki kere tasarlanmış olur.
-
-## AŞAMA D — Gerçek İş Modeli Altyapısı
-
-### D1 — Görsel Yükleme Sistemi
+### C1 — Görsel Yükleme Sistemi
 Tek image URL alanından gerçek dosya upload/storage sistemine geçiş.
 Owner Dashboard'dan önce şart.
 
-### D2 — Owner/Business Dashboard
+### C2 — Owner/Business Dashboard (adım adım, fikir geldikçe)
 users tablosuna rol sistemi, işletme sahibi kendi Establishment
 kaydını oluşturur/düzenler: fotoğraf, açıklama, çalışma saatleri
-(Faz 7b burada gerçekleşir), tag, sosyal medya linkleri.
+(Faz 7b burada gerçekleşir), tag, sosyal medya linkleri. Ne
+ekranlar/formlar gerekeceği şimdiden tam belli değil — diğer tüm
+fazlarda olduğu gibi kullanırken ihtiyaç çıktıkça inşa edilecek.
 
-### D3 — Claim + Doğrulama
+### C3 — Claim + Doğrulama
 "Bu işletme benim" başvurusu → manuel admin onayı (başlangıçta basit).
 
-### D4 — Analytics
+### C4 — Analytics
 Profil görüntülenme, favoriye eklenme, yol tarifi tıklama, paylaşım
 sayacı, işletme sahibine gösterilir.
 
-### D5 — Booster (Görünürlük Satışı) ⚠️ ayrı alt-proje
-Ödeme altyapısı + faturalama + muhtemelen resmi işletme kaydı
-gerektirir. Geldiğinde ayrıca planlanacak, diğer fazlar gibi hızlı değil.
+## AŞAMA D — Tasarıma Hazırlık (her şey netleştikten sonra)
 
-## AŞAMA E — Saha
-- E1: 20-30 gerçek işletmeyle görüşüp ücretsiz listeleme teklif et
-- E2: 100-500 gerçek kullanıcı getir, ölç
-- E3: Gerçek talep görülürse V2 fikirleri (rezervasyon, sadakat,
-  ön sipariş) gündeme gelir — talep yoksa gündeme gelmez
+### D1 — Blade Component Temizliği
+Establishment kartı artık ~9+ view dosyasında (home, index, trending,
+wizard/results, wizard/similar, compare, areas/show, surprise, weather,
++ Owner Dashboard sayfaları) kopya HTML olarak duruyor. Redesign'den
+önce tek bir <x-establishment-card> component'ine çıkar.
+
+## 🎨 AŞAMA E — Tasarım Yenileme (UI/UX Redesign)
+C aşaması (Owner Dashboard dahil her şey) bitince yapılır — artık
+tasarlanacak her ekran belli, hiçbir şey iki kere tasarlanmaz.
+Tasarımın kendisi ayrı AI'larla hazırlanacak, implementasyon burada
+yapılacak.
+
+## AŞAMA F — Saha
+- F1: 20-30 gerçek işletmeyle görüşüp ücretsiz listeleme teklif et
+- F2: 100-500 gerçek kullanıcı getir, ölç
+- F3: Gerçek talep görülürse V2 fikirleri gündeme gelir
 
 ## Backlog / Fikir Havuzu
 (Feature freeze sonrası gelen fikirler buraya yazılır, hemen kodlanmaz)
-- Faz 7b: opening_hours artık Owner Dashboard (D2) kapsamında ele alınıyor
+- Booster (görünürlük satışı): ödeme altyapısı + faturalama + muhtemelen
+  resmi işletme kaydı gerektiren ayrı bir alt-proje, talep/ihtiyaç
+  netleşince ayrıca planlanacak
 - Hava durumu önerilerinde "outdoor seating" gibi daha net establishment kriterleri
+- Rezervasyon, sadakat programı, ön sipariş — sadece gerçek kullanıcı talebi görülürse
