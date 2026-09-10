@@ -1,87 +1,79 @@
-# BakuMeet Roadmap — Faz 6e ve Sonrası
+# BakuMeet Roadmap v2 (Faz 18 sonrası)
 
-## Vizyon
-BakuMeet bir restaurant directory değil, bir discovery/recommendation
-uygulaması. Ana soru: "Nereye gideyim?" — buna mümkün olduğunca kolay
-cevap vermek. Şimdilik lokal kullanıcılara odaklanıyoruz (turist modu,
-çoklu dil sonraki evrede).
+Faz 6e-18 (keşif/öneri/sosyal özellikler) tamamlandı ve canlıda.
+Bundan sonraki hedef: yeni özellik değil, ürünü sağlamlaştırmak,
+sonra iş modeline (işletme paneli + görünürlük satışı) geçmek.
 
-## Öncelik Dışı (Şimdilik Yapılmayacak)
-- Chatbot, gereksiz AI özellikleri
-- Ödeme sistemi
-- Karmaşık sosyal ağ
-- Turist özellikleri, çoklu dil
-- Gereksiz admin panelleri
+## AŞAMA A — Stabilizasyon (yeni özellik YOK)
 
-## FAZ 6e — Geolocation / Yakınımdakiler
-Fayda: "Bana en yakın nerede" sorusuna cevap, mesafeye göre sıralama
-(500m/1km/3km/5km), mevcut mood/price/type filtreleriyle birlikte çalışır.
-Zorluk: Medium — Katkı: High
-Neden ilk: lat/long altyapısı zaten var (haritada kullanıldı), birçok
-sonraki özelliğin (Wizard, Explore by Area) temeli.
+### A1 — Feature Freeze
+Yeni özellik fikirleri direkt kodlanmıyor, "Backlog" bölümüne yazılıyor.
 
-## FAZ 7 — Açık mı? (Open Now / Çalışma Saatleri) ⭐
-Yeni alan: opening_hours. Fayda: kapalı bir yere yönlendirme riskini
-ortadan kaldırır — "nereye gideyim" sorusunun en kritik parçası.
-Zorluk: Medium — Katkı: High
-## FAZ 7b — İşletme Sahibi Paneli (Owner Dashboard) ⭐
-İşletme sahiplerinin kendi mekanlarını yönetebileceği panel: çalışma
-saatleri (opening_hours), fotoğraf, açıklama güncelleme. Faz 7'de
-altyapı (opening_hours alanı + gösterim) hazırlandı, gerçek veri
-girişi burada olacak. Rol sistemi (owner/admin) gerektirir.
-Zorluk: Medium-Hard — Katkı: High (gerçek veri kaynağı)
+### A2 — Deploy/Seed Temizliği ⭐ (öncelikli, somut hata)
+railpack.json her deploy'da DemoDataSeeder'ı çalıştırıyor, bu da sabit
+olarak Establishment #1'i hedefliyor. Gerçek işletmeler eklenince bu
+anlamsızlaşır/zarar verebilir. Yapılacak: DemoDataSeeder'ı deploy
+komutundan çıkar (görevini zaten yaptı). TagSeeder kalabilir (idempotent).
 
-## FAZ 8 — Tags / Özellikler ⭐
-Wi-Fi, Laptop Friendly, Outdoor, Live Music, Open Late, Pet Friendly,
-Family Friendly, Quiet, Good for Studying vb. Yeni tablo: tags +
-establishment_tag pivot (Collection'a benzer yapı).
-Fayda: "çalışabileceğim bir yer" gibi somut ihtiyaçla arama.
-Zorluk: Medium — Katkı: High
+### A3 — Kritik Akış Testleri
+15-20 senaryo, Laravel Feature Test: anasayfa, establishments listesi/
+detay, /nearby, /wizard, /compare, /trending, /weather, favorite toggle,
+review create/delete, auth, yetkisiz kullanıcı review/favorite yapamaz.
 
-## FAZ 9 — Bölgeye Göre Keşfet (Explore by Area)
-Her semt için ayrı sayfa: işletmeler + istatistik + mini harita +
-ilgili koleksiyonlar. Zorluk: Medium — Katkı: Medium-High
+### A4 — Mobil UX Turu (henüz redesign değil)
+3 akışı telefonda uçtan uca yürü:
+1. Anasayfa → Öneri → Detay → Harita → Yol Tarifi → Paylaş
+2. Wizard → Sonuç → Compare → Favori
+3. Kayıt → Giriş → Review → Favori → Senin İçin
+Takılma/gereksiz tıklama varsa mevcut tasarımla (renk değişmeden) düzelt.
 
-## FAZ 10 — Trending / Popüler
-rating + review_count + favorite_count ağırlıklı skor (sadece puana
-değil gerçek ilgiye göre). Zorluk: Easy-Medium — Katkı: Medium
+## AŞAMA B — Redesign'e Hazırlık
 
-## FAZ 11 — Recommendation Wizard ⭐⭐
-Birkaç soru: ne yapmak istiyorsun / bütçe / nerede / yakın mı olsun →
-uygun mekanları önerir. Tags, geolocation, price_range, mood — hepsi
-hazır, wizard bunları birleştiren arayüz.
-Zorluk: Medium-Hard — Katkı: High (en güçlü differentiator)
+### B1 — Kısmi Gerçek İçerik (15-20 mekan)
+Redesign'i düzgün seed veriyle değil, gerçek/düzensiz veriyle (uzun
+isim, eksik foto, farklı tag sayısı, farklı saat) yapmak daha sağlam
+sonuç verir. 30-50'ye tamamlamadan önce ilk 15-20 gerçek mekanı ekle.
 
-## FAZ 12 — Sürpriz Bana (Surprise Me) ⭐
-Wizard'ın tek-tık versiyonu, filtrelere göre ağırlıklı rastgele öneri.
-Zorluk: Easy — Katkı: Medium-High
+### B2 — Blade Component Temizliği
+Establishment kartı ~9 view dosyasında (home, index, trending, wizard/
+results, wizard/similar, compare, areas/show, surprise, weather) kopya
+HTML olarak duruyor. Redesign'den önce tek bir <x-establishment-card>
+component'ine çıkar — tema değişikliği tek dosyadan yapılabilsin.
 
-## FAZ 13 — "Beğendiklerine Benzer" ⭐
-Favoriler/yorumlara bakıp benzer mood/tag'li yerler önerme (kural
-bazlı, henüz ML değil — basit versiyon).
-Zorluk: Medium — Katkı: Medium-High
+## 🎨 AŞAMA C — Tasarım Yenileme (UI/UX Redesign)
+A ve B bitince yapılır. Tasarımın kendisi ayrı AI'larla hazırlanacak,
+implementasyon burada yapılacak. Owner Dashboard'dan ÖNCE olmalı —
+yoksa dashboard iki kere tasarlanmış olur.
 
-## FAZ 14 — Review Alt Puanları
-Atmosphere / Food / Service / Value ayrı puanlar, genel rating bunların
-ortalaması. Zorluk: Medium — Katkı: Medium
+## AŞAMA D — Gerçek İş Modeli Altyapısı
 
-(faz 15 silindi)
+### D1 — Görsel Yükleme Sistemi
+Tek image URL alanından gerçek dosya upload/storage sistemine geçiş.
+Owner Dashboard'dan önce şart.
 
-## FAZ 16 — Hızlı Karşılaştır
-2-3 mekanı yan yana karşılaştırma (puan, fiyat, mesafe, tag).
-Zorluk: Easy-Medium — Katkı: Medium
+### D2 — Owner/Business Dashboard
+users tablosuna rol sistemi, işletme sahibi kendi Establishment
+kaydını oluşturur/düzenler: fotoğraf, açıklama, çalışma saatleri
+(Faz 7b burada gerçekleşir), tag, sosyal medya linkleri.
 
-## FAZ 17 — Hava Durumuna Duyarlı Öneriler ⭐
-Yağmurluysa kapalı/sakin, güneşliyse açık hava önerisi (basit weather
-API). Zorluk: Medium — Katkı: Medium
+### D3 — Claim + Doğrulama
+"Bu işletme benim" başvurusu → manuel admin onayı (başlangıçta basit).
 
-## FAZ 18 — Paylaş
-Basit link ile paylaşım (karmaşık sosyal ağ değil).
-Zorluk: Easy — Katkı: Medium
+### D4 — Analytics
+Profil görüntülenme, favoriye eklenme, yol tarifi tıklama, paylaşım
+sayacı, işletme sahibine gösterilir.
 
-## Backlog (Sırası Belirsiz, İleride)
-- Grup modu / oylama (arkadaşlarla karar verme) — Hard
-- Arama uyarıları (yeni eklenen yer bildirimleri) — Medium
-- Gerçek görsel yükleme sistemi — ayrı faz olarak planlanacak
-- Derin kişiselleştirme (ML tabanlı) — çok ileride
-- Çoklu dil, turist modu, chatbot, ödeme — kapsam dışı
+### D5 — Booster (Görünürlük Satışı) ⚠️ ayrı alt-proje
+Ödeme altyapısı + faturalama + muhtemelen resmi işletme kaydı
+gerektirir. Geldiğinde ayrıca planlanacak, diğer fazlar gibi hızlı değil.
+
+## AŞAMA E — Saha
+- E1: 20-30 gerçek işletmeyle görüşüp ücretsiz listeleme teklif et
+- E2: 100-500 gerçek kullanıcı getir, ölç
+- E3: Gerçek talep görülürse V2 fikirleri (rezervasyon, sadakat,
+  ön sipariş) gündeme gelir — talep yoksa gündeme gelmez
+
+## Backlog / Fikir Havuzu
+(Feature freeze sonrası gelen fikirler buraya yazılır, hemen kodlanmaz)
+- Faz 7b: opening_hours artık Owner Dashboard (D2) kapsamında ele alınıyor
+- Hava durumu önerilerinde "outdoor seating" gibi daha net establishment kriterleri
