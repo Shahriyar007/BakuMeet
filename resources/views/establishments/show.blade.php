@@ -5,7 +5,7 @@
 @section('content')
     <div>
         <a href="/establishments" style="color: #3498db; text-decoration: none;">← Geri Dön</a>
-        
+ 
         <div style="margin-bottom: 20px;">
                 @if ($establishment->image)
                     <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
@@ -14,10 +14,14 @@
                         {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
                     </div>
             @endif
-            
+
             <h2>{{ $establishment->name }}</h2>
-            
-@auth
+
+            <button onclick="shareEstablishment()" style="padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; background-color: #ecf0f1; color: #333; margin-bottom: 8px;">
+                🔗 Paylaş
+            </button>
+
+                @auth
                 <form action="/establishments/{{ $establishment->id }}/favorite" method="POST" style="display: inline;">
                     @csrf
                     @php
@@ -195,3 +199,22 @@
             @endforelse
         </div>
 @endsection
+@push('scripts')
+<script>
+    function shareEstablishment() {
+        const shareData = {
+            title: '{{ addslashes($establishment->name) }} - BakuMeet',
+            text: '{{ addslashes($establishment->name) }} mekanına göz at!',
+            url: window.location.href
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link kopyalandı!');
+            });
+        }
+    }
+</script>
+@endpush
