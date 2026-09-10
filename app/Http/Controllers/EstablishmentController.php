@@ -124,4 +124,14 @@ class EstablishmentController extends Controller
         return view('establishments.trending', ['establishments' => $establishments]);
     }
 
+     public function compare(Request $request)
+    {
+        $ids = $request->query('ids', []);        $lat = $request->query('lat');
+        $lng = $request->query('lng');
+
+        $establishments = $this->service->getForComparison($ids, $lat ? (float) $lat : null, $lng ? (float) $lng : null);
+
+        return view('establishments.compare', ['establishments' => $establishments]);
+    }
+
 }

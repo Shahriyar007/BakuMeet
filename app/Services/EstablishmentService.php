@@ -218,6 +218,21 @@ class EstablishmentService
             ->values();
     }
 
+    public function getForComparison(array $ids, ?float $lat = null, ?float $lng = null)
+    {
+        $establishments = $this->repository->all()->whereIn('id', $ids);
+
+        if ($lat && $lng) {
+            $establishments = $establishments->map(function ($e) use ($lat, $lng) {
+                if ($e->latitude && $e->longitude) {
+                    $e->distance_km = $this->haversine($lat, $lng, $e->latitude, $e->longitude);
+                }
+                return $e;
+            });
+        }
+
+        return $establishments->values();
+    }
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km

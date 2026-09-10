@@ -3,6 +3,9 @@
 @section('title', 'İşletmeler - BakuMeet')
 
 @section('content')
+        <form action="/compare" method="GET" id="compare-form">
+        <input type="hidden" name="lat" id="compare-lat">
+        <input type="hidden" name="lng" id="compare-lng">
     <div>
         <h2>İşletmeler Listesi</h2>
 
@@ -73,8 +76,12 @@
                 <p>Sonuç bulunamadı.</p>
             </div>
         @else
-            @foreach ($establishments as $place)
+           @foreach ($establishments as $place)
                 <div class="card">
+                    <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 13px; color: #3498db;">
+                        <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
+                        Karşılaştırmaya ekle
+                    </label>
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
                             <h3>{{ $place->name }}</h3>
@@ -124,6 +131,44 @@
                     </div>
                 </div>
             @endforeach
-        @endif
+@endif
     </div>
+
+    <div id="compare-bar" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #2c3e50; padding: 12px; text-align: center; z-index: 100;">
+        <button type="submit" form="compare-form" style="padding: 10px 20px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            ⚖️ Karşılaştır (<span id="compare-count">0</span>)
+        </button>
+    </div>
+    </form>
+
+    <script>
+        const checkboxes = document.querySelectorAll('.compare-checkbox');
+        const bar = document.getElementById('compare-bar');
+        const countEl = document.getElementById('compare-count');
+
+        function updateCompareBar() {
+            const checked = document.querySelectorAll('.compare-checkbox:checked');
+            countEl.innerText = checked.length;
+            bar.style.display = checked.length >= 2 ? 'block' : 'none';
+
+            checkboxes.forEach(cb => {
+                if (!cb.checked && checked.length >= 3) {
+                    cb.disabled = true;
+                } else {
+                    cb.disabled = false;
+                }
+            });
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateCompareBar));
+
+        document.getElementById('compare-form').addEventListener('submit', function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    document.getElementById('compare-lat').value = position.coords.latitude;
+                    document.getElementById('compare-lng').value = position.coords.longitude;
+                });
+            }
+        });
+    </script>
 @endsection

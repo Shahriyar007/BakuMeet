@@ -65,9 +65,7 @@ Zorluk: Medium — Katkı: Medium-High
 Atmosphere / Food / Service / Value ayrı puanlar, genel rating bunların
 ortalaması. Zorluk: Medium — Katkı: Medium
 
-## FAZ 15 — Koleksiyonlar → Rotalar ⭐
-Collection'lara sıra/adım eklenir (Cafe A → Cafe B → yürüyüş noktası).
-Zorluk: Medium-Hard — Katkı: Medium-High
+(faz 15 silindi)
 
 ## FAZ 16 — Hızlı Karşılaştır
 2-3 mekanı yan yana karşılaştırma (puan, fiyat, mesafe, tag).
