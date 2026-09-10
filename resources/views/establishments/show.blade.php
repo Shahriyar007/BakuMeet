@@ -97,15 +97,15 @@
                 <p style="color: #999;"><em>Çalışma saatleri henüz eklenmedi.</em></p>
             @endif
 
-            @if ($establishment->latitude && $establishment->longitude)
+      @if ($establishment->latitude && $establishment->longitude)
                 <h3 style="margin-top: 20px; margin-bottom: 10px;">🗺️ Haritada Konum</h3>
-                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $establishment->latitude }},{{ $establishment->longitude }}" target="_blank">
-                    <img src="https://staticmap.openstreetmap.de/staticmap.php?center={{ $establishment->latitude }},{{ $establishment->longitude }}&zoom=15&size=500x250&markers={{ $establishment->latitude }},{{ $establishment->longitude }},red-pushpin"
-                         alt="{{ $establishment->name }} konumu"
-                         style="width: 100%; max-width: 500px; border-radius: 8px; display: block; margin: 0 auto;">
-                </a>
-                <p style="text-align: center; margin-top: 6px; font-size: 13px; color: #999;">📍 Yol tarifi almak için haritaya dokun</p>
-             @endif
+		<div id="show-map" style="width: 100%; max-width: 500px; height: 160px; border-radius: 8px; margin: 0 auto;"></div>
+                <p style="text-align: center; margin-top: 6px; font-size: 13px;">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $establishment->latitude }},{{ $establishment->longitude }}" target="_blank" class="btn" style="display: inline-block; margin-top: 8px;">
+                        🧭 Yol Tarifi Al
+                    </a>
+                </p>
+            @endif
         </div>
     </div>
 <!-- YORUMLAR BÖLÜMÜ -->
@@ -200,6 +200,18 @@
         </div>
 @endsection
 @push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@if ($establishment->latitude && $establishment->longitude)
+<script>
+    const showMap = L.map('show-map').setView([{{ $establishment->latitude }}, {{ $establishment->longitude }}], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(showMap);
+    L.marker([{{ $establishment->latitude }}, {{ $establishment->longitude }}]).addTo(showMap)
+        .bindPopup('{{ addslashes($establishment->name) }}');
+</script>
+@endif
 <script>
     function shareEstablishment() {
         const shareData = {
