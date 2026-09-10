@@ -48,13 +48,22 @@ class ReviewController extends Controller
         return redirect("/establishments/{$establishmentId}")->with('success', 'Yorumunuz eklendi!');
     }
 
-    public function destroy(int $id)
-    {
+     public function destroy(int $id)
+     {
         $review = \App\Models\Review::find($id);
-        $establishmentId = $review?->establishment_id;
+
+        if (!$review) {
+            abort(404);
+        }
+
+        if ($review->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $establishmentId = $review->establishment_id;
 
         $this->service->deleteReview($id);
-
+    
         if ($establishmentId) {
             $establishment = \App\Models\Establishment::find($establishmentId);
             $newRating = $establishment->reviews()->avg('rating');
