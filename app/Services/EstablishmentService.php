@@ -233,6 +233,45 @@ class EstablishmentService
 
         return $establishments->values();
     }
+
+    public function getWeatherSuggestions()
+    {
+        $weather = \Illuminate\Support\Facades\Http::get('https://api.open-meteo.com/v1/forecast', [
+            'latitude' => 40.3777,
+            'longitude' => 49.8920,
+            'current' => 'temperature_2m,weather_code',
+            'timezone' => 'auto',
+        ])->json();
+
+        $code = $weather['current']['weather_code'] ?? 0;
+        $temp = $weather['current']['temperature_2m'] ?? null;
+
+        $isBadWeather = in_array($code, [51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99]);
+
+        $establishments = $this->repository->getAllWithCounts();
+
+        if ($isBadWeather) {
+            $condition = 'Yağmurlu/Karlı';
+            $emoji = '🌧️';
+            $suggestions = $establishments->filter(function ($e) {
+                return $e->mood === 'sakin' || $e->tags->contains('name', 'Ders Çalışmaya Uygun') || $e->tags->contains('name', 'Wi-Fi');
+            });
+        } else {
+            $condition = 'Açık/Güneşli';
+            $emoji = '☀️';
+            $suggestions = $establishments->filter(function ($e) {
+                return $e->tags->contains('name', 'Açık Hava') || $e->mood === 'canlı';
+            });
+        }
+
+        return [
+            'condition' => $condition,
+            'emoji' => $emoji,
+            'temperature' => $temp,
+            'establishments' => $suggestions->sortByDesc('rating')->take(6)->values(),
+        ];
+    }
+
     private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
     $earthRadius = 6371; // km

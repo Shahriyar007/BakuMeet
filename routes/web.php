@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WeatherController;
 use App\Http\Controllers\WizardController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\NearbyController;
@@ -20,6 +21,7 @@ Route::get('/nearby', [NearbyController::class, 'index'])->name('nearby.index');
 Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
 Route::get('/trending', [EstablishmentController::class, 'trending'])->name('establishments.trending');
 Route::get('/compare', [EstablishmentController::class, 'compare'])->name('establishments.compare');
+Route::get('/weather', [WeatherController::class, 'index'])->name('weather.index');
 Route::get('/wizard', [WizardController::class, 'index'])->name('wizard.index');
 Route::get('/wizard/results', [WizardController::class, 'results'])->name('wizard.results');
 Route::get('/surprise', [WizardController::class, 'surprise'])->name('wizard.surprise');

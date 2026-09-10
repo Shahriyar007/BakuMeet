@@ -133,6 +133,7 @@
         <a href="/trending">🔥 Trend</a>
 	<a href="/wizard">🧙 Öneri Al</a>
 	<a href="/surprise">🎲 Sürpriz Bana</a>
+        <a href="/weather">🌦️ Hava Durumu</a>
 	@auth
             <a href="/favorites">❤️ Favorilerim</a>
             <a href="/for-you">💡 Senin İçin</a>
