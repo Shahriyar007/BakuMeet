@@ -3,6 +3,9 @@
 @section('title', 'İşletmeler - BakuMeet')
 
 @section('content')
+        <form action="/compare" method="GET" id="compare-form">
+        <input type="hidden" name="lat" id="compare-lat">
+        <input type="hidden" name="lng" id="compare-lng">
     <div>
         <h2>İşletmeler Listesi</h2>
 
@@ -132,28 +135,13 @@
     </div>
 
     <div id="compare-bar" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #2c3e50; padding: 12px; text-align: center; z-index: 100;">
-      <button type="button" onclick="goToCompare()" style="padding: 10px 20px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <button type="submit" form="compare-form" style="padding: 10px 20px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
             ⚖️ Karşılaştır (<span id="compare-count">0</span>)
         </button>
     </div>
+    </form>
 
     <script>
-        function goToCompare() {
-            const checked = document.querySelectorAll('.compare-checkbox:checked');
-            const ids = Array.from(checked).map(cb => cb.value);
-            let url = '/compare?' + ids.map(id => 'ids[]=' + id).join('&');
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    url += '&lat=' + position.coords.latitude + '&lng=' + position.coords.longitude;
-                    window.location.href = url;
-                }, function () {
-                    window.location.href = url;
-                });
-            } else {
-                window.location.href = url;
-            }
-        }
         const checkboxes = document.querySelectorAll('.compare-checkbox');
         const bar = document.getElementById('compare-bar');
         const countEl = document.getElementById('compare-count');
@@ -174,5 +162,13 @@
 
         checkboxes.forEach(cb => cb.addEventListener('change', updateCompareBar));
 
-	</script>
+        document.getElementById('compare-form').addEventListener('submit', function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    document.getElementById('compare-lat').value = position.coords.latitude;
+                    document.getElementById('compare-lng').value = position.coords.longitude;
+                });
+            }
+        });
+    </script>
 @endsection
