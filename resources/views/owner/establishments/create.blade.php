@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('owner.establishments.store') }}">
+	<form method="POST" action="{{ route('owner.establishments.store') }}" enctype="multipart/form-data">
         @csrf
         <div style="margin-bottom: 12px;">
             <label>İşletme Adı</label><br>
@@ -79,6 +79,9 @@
                 <label><input type="checkbox" name="closed_{{ $key }}" value="1"> Kapalı</label>
             </div>
         @endforeach
+
+	<h3>Fotoğraflar (en fazla 5, her biri max 5MB)</h3>
+        <input type="file" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
 
         <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Kaydet</button>
     </form>

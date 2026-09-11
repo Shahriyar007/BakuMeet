@@ -30,6 +30,16 @@ class Establishment extends Model
         'opening_hours' => 'array',
     ];
 
+    public function photos()
+    {
+        return $this->hasMany(EstablishmentPhoto::class)->orderBy('sort_order');
+    }
+
+    public function primaryPhoto()
+    {
+        return $this->hasOne(EstablishmentPhoto::class)->where('is_primary', true);
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

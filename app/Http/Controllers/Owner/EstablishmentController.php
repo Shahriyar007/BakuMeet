@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Models\EstablishmentPhoto;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Establishment;
 use App\Models\Tag;
@@ -40,6 +43,8 @@ class EstablishmentController extends Controller
             'price_range' => ['required', 'integer', 'min:1', 'max:3'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'exists:tags,id'],
+	    'photos' => ['nullable', 'array', 'max:5'],
+            'photos.*' => ['image', 'max:5120'],
         ]);
 
         $establishment = Establishment::create([
@@ -60,7 +65,12 @@ class EstablishmentController extends Controller
         }
 
         $account->establishment_id = $establishment->id;
-        $account->save();
+        
+	if ($request->hasFile('photos')) {
+            $this->storePhotos($request, $establishment);
+        }
+	
+	$account->save();
 
         return redirect()->route('owner.dashboard')
             ->with('status', 'İşletmeniz eklendi. Onaylandıktan sonra yayına alınacaktır.');
@@ -69,7 +79,7 @@ class EstablishmentController extends Controller
     public function edit()
     {
         $account = Auth::guard('business')->user();
-        $establishment = $account->establishment;
+	$establishment = $account->establishment->load('photos', 'tags');
 
         Gate::forUser($account)->authorize('update', $establishment);
 
@@ -98,7 +108,9 @@ class EstablishmentController extends Controller
             'price_range' => ['required', 'integer', 'min:1', 'max:3'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'exists:tags,id'],
-        ]);
+            'photos' => ['nullable', 'array', 'max:5'],
+            'photos.*' => ['image', 'max:5120'],
+	 ]);
 
         $establishment->update([
             'name' => $validated['name'],
@@ -118,7 +130,27 @@ class EstablishmentController extends Controller
             ->with('status', 'İşletme bilgileriniz güncellendi.');
     }
 
-    private function buildOpeningHours(Request $request): array
+      private function storePhotos(Request $request, Establishment $establishment): void
+    {
+        $hasExistingPrimary = $establishment->photos()->where('is_primary', true)->exists();
+
+        foreach ($request->file('photos') as $index => $file) {
+            $path = 'establishments/'.$establishment->id.'/'.Str::random(20).'.'.$file->getClientOriginalExtension();
+
+            Storage::disk('r2')->put($path, file_get_contents($file));
+
+            EstablishmentPhoto::create([
+                'establishment_id' => $establishment->id,
+                'path' => $path,
+                'is_primary' => ! $hasExistingPrimary && $index === 0,
+                'sort_order' => $establishment->photos()->count(),
+            ]);
+
+            $hasExistingPrimary = true;
+        }
+    }
+
+	private function buildOpeningHours(Request $request): array
     {
         $hours = [];
 

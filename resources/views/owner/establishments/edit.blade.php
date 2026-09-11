@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('owner.establishments.update') }}">
+	<form method="POST" action="{{ route('owner.establishments.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div style="margin-bottom: 12px;">
@@ -84,6 +84,19 @@
                 <label><input type="checkbox" name="closed_{{ $key }}" value="1" {{ ($day['closed'] ?? false) ? 'checked' : '' }}> Kapalı</label>
             </div>
         @endforeach
+	<h3>Mevcut Fotoğraflar</h3>
+        @if ($establishment->photos->isEmpty())
+            <p>Henüz fotoğraf eklenmedi.</p>
+        @else
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                @foreach ($establishment->photos as $photo)
+                    <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                @endforeach
+            </div>
+        @endif
+
+        <h3>Yeni Fotoğraf Ekle (en fazla 5, her biri max 5MB)</h3>
+        <input type="file" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
 
         <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Güncelle</button>
     </form>
