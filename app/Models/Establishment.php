@@ -50,6 +50,16 @@ class Establishment extends Model
         return $this->belongsToMany(Tag::class, 'establishment_tag');
     }
 
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
     public function isOpenNow(): ?bool
     {
         if (empty($this->opening_hours)) {

@@ -9,7 +9,7 @@ class OwnerDashboardController extends Controller
 {
     public function index()
     {
-        $account = Auth::guard('business')->user();
+        $account = Auth::guard('business')->user()->load('establishment.tags');
 
         return view('owner.dashboard', [
             'account' => $account,

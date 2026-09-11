@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Owner\EstablishmentController;
 use App\Http\Controllers\Owner\OwnerAuthController;
 use App\Http\Controllers\Owner\OwnerDashboardController;
 use Illuminate\Support\Facades\Route;
 
-// Guest-only owner routes (not yet logged in)
 Route::middleware('guest:business')->group(function () {
     Route::get('/login', [OwnerAuthController::class, 'showLoginForm'])->name('owner.login');
     Route::post('/login', [OwnerAuthController::class, 'login'])->name('owner.login.attempt');
@@ -13,9 +13,13 @@ Route::middleware('guest:business')->group(function () {
     Route::post('/register', [OwnerAuthController::class, 'register'])->name('owner.register.attempt');
 });
 
-// Authenticated owner routes
 Route::middleware('auth:business')->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
+
+    Route::get('/establishment/create', [EstablishmentController::class, 'create'])->name('owner.establishments.create');
+    Route::post('/establishment', [EstablishmentController::class, 'store'])->name('owner.establishments.store');
+    Route::get('/establishment/edit', [EstablishmentController::class, 'edit'])->name('owner.establishments.edit');
+    Route::put('/establishment', [EstablishmentController::class, 'update'])->name('owner.establishments.update');
 
     Route::post('/logout', [OwnerAuthController::class, 'logout'])->name('owner.logout');
 });

@@ -1,0 +1,85 @@
+@extends('layouts.owner')
+
+@section('title', 'İşletme Ekle')
+
+@section('content')
+    <h1>İşletmenizi Ekleyin</h1>
+
+    @if ($errors->any())
+        <div style="background: #ffe6e6; padding: 10px; border-radius: 4px;">
+            @foreach ($errors->all() as $error)
+                <p style="margin: 0;">{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('owner.establishments.store') }}">
+        @csrf
+        <div style="margin-bottom: 12px;">
+            <label>İşletme Adı</label><br>
+            <input type="text" name="name" value="{{ old('name') }}" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Tür</label><br>
+            <select name="type" required style="width: 100%; padding: 8px;">
+                <option value="cafe" {{ old('type') === 'cafe' ? 'selected' : '' }}>Kafe</option>
+                <option value="restaurant" {{ old('type') === 'restaurant' ? 'selected' : '' }}>Restoran</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Açıklama</label><br>
+            <textarea name="description" rows="4" style="width: 100%; padding: 8px;">{{ old('description') }}</textarea>
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Konum (bölge/adres)</label><br>
+            <input type="text" name="location" value="{{ old('location') }}" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Enlem (latitude)</label><br>
+            <input type="text" name="latitude" value="{{ old('latitude') }}" style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Boylam (longitude)</label><br>
+            <input type="text" name="longitude" value="{{ old('longitude') }}" style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Mood</label><br>
+            <select name="mood" required style="width: 100%; padding: 8px;">
+                <option value="sakin" {{ old('mood') === 'sakin' ? 'selected' : '' }}>Sakin</option>
+                <option value="romantik" {{ old('mood') === 'romantik' ? 'selected' : '' }}>Romantik</option>
+                <option value="canlı" {{ old('mood') === 'canlı' ? 'selected' : '' }}>Canlı</option>
+                <option value="lüks" {{ old('mood') === 'lüks' ? 'selected' : '' }}>Lüks</option>
+                <option value="bütçedostu" {{ old('mood') === 'bütçedostu' ? 'selected' : '' }}>Bütçe Dostu</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label>Fiyat Aralığı</label><br>
+            <select name="price_range" required style="width: 100%; padding: 8px;">
+                <option value="1" {{ old('price_range') === '1' ? 'selected' : '' }}>₼</option>
+                <option value="2" {{ old('price_range') === '2' ? 'selected' : '' }}>₼₼</option>
+                <option value="3" {{ old('price_range') === '3' ? 'selected' : '' }}>₼₼₼</option>
+            </select>
+        </div>
+
+        <h3>Etiketler</h3>
+        @foreach ($tags as $tag)
+            <label style="display: block; margin-bottom: 6px;">
+                <input type="checkbox" name="tags[]" value="{{ $tag->id }}"> {{ $tag->name }}
+            </label>
+        @endforeach
+
+        <h3>Çalışma Saatleri</h3>
+        @php $dayLabels = ['monday' => 'Pazartesi', 'tuesday' => 'Salı', 'wednesday' => 'Çarşamba', 'thursday' => 'Perşembe', 'friday' => 'Cuma', 'saturday' => 'Cumartesi', 'sunday' => 'Pazar']; @endphp
+        @foreach ($dayLabels as $key => $label)
+            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <span style="width: 90px;">{{ $label }}</span>
+                <input type="time" name="open_{{ $key }}" value="09:00" style="padding: 6px;">
+                <span>-</span>
+                <input type="time" name="close_{{ $key }}" value="22:00" style="padding: 6px;">
+                <label><input type="checkbox" name="closed_{{ $key }}" value="1"> Kapalı</label>
+            </div>
+        @endforeach
+
+        <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Kaydet</button>
+    </form>
+@endsection
