@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\EstablishmentPhoto;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class EstablishmentController extends Controller
         return view('owner.establishments.create', ['tags' => Tag::all()]);
     }
 
-    public function store(Request $request): RedirectResponse
+     public function store(Request $request): RedirectResponse
     {
         $account = Auth::guard('business')->user();
 
@@ -43,34 +44,35 @@ class EstablishmentController extends Controller
             'price_range' => ['required', 'integer', 'min:1', 'max:3'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'exists:tags,id'],
-	    'photos' => ['nullable', 'array', 'max:5'],
+            'photos' => ['nullable', 'array', 'max:5'],
             'photos.*' => ['image', 'max:5120'],
         ]);
 
-        $establishment = Establishment::create([
-            'name' => $validated['name'],
-            'type' => $validated['type'],
-            'description' => $validated['description'] ?? null,
-            'location' => $validated['location'],
-            'mood' => $validated['mood'],
-            'latitude' => $validated['latitude'] ?? null,
-            'longitude' => $validated['longitude'] ?? null,
-            'price_range' => $validated['price_range'],
-            'opening_hours' => $this->buildOpeningHours($request),
-            'status' => 'pending',
-        ]);
+        DB::transaction(function () use ($request, $validated, $account) {
+            $establishment = Establishment::create([
+                'name' => $validated['name'],
+                'type' => $validated['type'],
+                'description' => $validated['description'] ?? null,
+                'location' => $validated['location'],
+                'mood' => $validated['mood'],
+                'latitude' => $validated['latitude'] ?? null,
+                'longitude' => $validated['longitude'] ?? null,
+                'price_range' => $validated['price_range'],
+                'opening_hours' => $this->buildOpeningHours($request),
+                'status' => 'pending',
+            ]);
 
-        if (! empty($validated['tags'])) {
-            $establishment->tags()->sync($validated['tags']);
-        }
+            if (! empty($validated['tags'])) {
+                $establishment->tags()->sync($validated['tags']);
+            }
 
-        $account->establishment_id = $establishment->id;
-        
-	if ($request->hasFile('photos')) {
-            $this->storePhotos($request, $establishment);
-        }
-	
-	$account->save();
+            if ($request->hasFile('photos')) {
+                $this->storePhotos($request, $establishment);
+            }
+
+            $account->establishment_id = $establishment->id;
+            $account->save();
+        });
 
         return redirect()->route('owner.dashboard')
             ->with('status', 'İşletmeniz eklendi. Onaylandıktan sonra yayına alınacaktır.');
@@ -90,7 +92,7 @@ class EstablishmentController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+     public function update(Request $request): RedirectResponse
     {
         $account = Auth::guard('business')->user();
         $establishment = $account->establishment;
@@ -110,21 +112,27 @@ class EstablishmentController extends Controller
             'tags.*' => ['integer', 'exists:tags,id'],
             'photos' => ['nullable', 'array', 'max:5'],
             'photos.*' => ['image', 'max:5120'],
-	 ]);
-
-        $establishment->update([
-            'name' => $validated['name'],
-            'type' => $validated['type'],
-            'description' => $validated['description'] ?? null,
-            'location' => $validated['location'],
-            'mood' => $validated['mood'],
-            'latitude' => $validated['latitude'] ?? null,
-            'longitude' => $validated['longitude'] ?? null,
-            'price_range' => $validated['price_range'],
-            'opening_hours' => $this->buildOpeningHours($request),
         ]);
 
-        $establishment->tags()->sync($validated['tags'] ?? []);
+        DB::transaction(function () use ($request, $validated, $establishment) {
+            $establishment->update([
+                'name' => $validated['name'],
+                'type' => $validated['type'],
+                'description' => $validated['description'] ?? null,
+                'location' => $validated['location'],
+                'mood' => $validated['mood'],
+                'latitude' => $validated['latitude'] ?? null,
+                'longitude' => $validated['longitude'] ?? null,
+                'price_range' => $validated['price_range'],
+                'opening_hours' => $this->buildOpeningHours($request),
+            ]);
+
+            $establishment->tags()->sync($validated['tags'] ?? []);
+
+            if ($request->hasFile('photos')) {
+                $this->storePhotos($request, $establishment);
+            }
+        });
 
         return redirect()->route('owner.dashboard')
             ->with('status', 'İşletme bilgileriniz güncellendi.');
