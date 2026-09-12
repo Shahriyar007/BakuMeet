@@ -70,9 +70,15 @@
                     <p><span class="rating">⭐ {{ $place->rating }}</span></p>
                     <a href="/establishments/{{ $place->id }}" class="btn">Detaylar</a>
                 </div>
-                <div style="width: 70px; height: 70px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
-                    {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
-                </div>
+		@if ($place->primaryPhoto)
+                    <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+                @elseif ($place->image)
+                    <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+                @else
+                    <div style="width: 70px; height: 70px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
+                        {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
+                    </div>
+                @endif
             </div>
         </div>
     @endforeach
