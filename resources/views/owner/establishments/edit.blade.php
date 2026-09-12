@@ -13,7 +13,7 @@
         </div>
     @endif
 
-	<form method="POST" action="{{ route('owner.establishments.update') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('owner.establishments.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div style="margin-bottom: 12px;">
@@ -84,30 +84,31 @@
                 <label><input type="checkbox" name="closed_{{ $key }}" value="1" {{ ($day['closed'] ?? false) ? 'checked' : '' }}> Kapalı</label>
             </div>
         @endforeach
-	<h3>Mevcut Fotoğraflar</h3>
-        @if ($establishment->photos->isEmpty())
-            <p>Henüz fotoğraf eklenmedi.</p>
-        @else
-	<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                @foreach ($establishment->photos as $photo)
-                    <div style="position: relative; width: 100px;">
-                        <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                        <form action="{{ route('owner.establishments.photos.destroy', $photo) }}" method="POST" style="margin-top: 4px;" onsubmit="return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
-                        </form>
-                        @if ($photo->is_primary)
-                            <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        @endif
 
         <h3>Yeni Fotoğraf Ekle (en fazla 5, her biri max 5MB)</h3>
         <input type="file" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
 
         <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Güncelle</button>
     </form>
+
+    <h3>Mevcut Fotoğraflar</h3>
+    @if ($establishment->photos->isEmpty())
+        <p>Henüz fotoğraf eklenmedi.</p>
+    @else
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+            @foreach ($establishment->photos as $photo)
+                <div style="position: relative; width: 100px;">
+                    <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                    <form action="{{ route('owner.establishments.photos.destroy', $photo) }}" method="POST" style="margin-top: 4px;" onsubmit="return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
+                    </form>
+                    @if ($photo->is_primary)
+                        <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    @endif
 @endsection
