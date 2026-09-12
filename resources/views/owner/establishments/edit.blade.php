@@ -85,9 +85,48 @@
             </div>
         @endforeach
 
-        <h3>Yeni Fotoğraf Ekle (en fazla 5, her biri max 5MB)</h3>
-        <input type="file" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
+<h3>Yeni Fotoğraf Ekle (en fazla 5, her biri max 5MB)</h3>
+        <input type="file" id="photoInput" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
+        <div id="photoPreviewList" style="margin-bottom: 12px;"></div>
 
+        <script>
+            document.getElementById('photoInput').addEventListener('change', function (e) {
+                const list = document.getElementById('photoPreviewList');
+                list.innerHTML = '';
+
+                const files = Array.from(e.target.files);
+
+                if (files.length === 0) {
+                    return;
+                }
+
+                if (files.length > 5) {
+                    const warning = document.createElement('p');
+                    warning.style.color = 'red';
+                    warning.textContent = 'En fazla 5 fotoğraf seçebilirsiniz. Şu an ' + files.length + ' dosya seçili.';
+                    list.appendChild(warning);
+                }
+
+                files.forEach(function (file) {
+                    const row = document.createElement('div');
+                    row.style.padding = '4px 0';
+
+                    const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+                    const tooBig = file.size > 5 * 1024 * 1024;
+                    const isImage = file.type.startsWith('image/');
+
+                    const icon = (!isImage) ? '⚠️' : (tooBig ? '❌' : '✅');
+                    const color = (!isImage || tooBig) ? 'red' : 'green';
+
+                    row.style.color = color;
+                    row.textContent = icon + ' ' + file.name + ' (' + sizeMb + ' MB)' +
+                        (tooBig ? ' — 5MB sınırını aşıyor, yüklenmeyecek' : '') +
+                        (!isImage ? ' — geçerli bir resim dosyası değil' : '');
+
+                    list.appendChild(row);
+                });
+            });
+        </script>
         <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Güncelle</button>
     </form>
 
