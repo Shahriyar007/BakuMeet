@@ -20,6 +20,7 @@ Route::middleware('auth:business')->group(function () {
     Route::post('/establishment', [EstablishmentController::class, 'store'])->name('owner.establishments.store');
     Route::get('/establishment/edit', [EstablishmentController::class, 'edit'])->name('owner.establishments.edit');
     Route::put('/establishment', [EstablishmentController::class, 'update'])->name('owner.establishments.update');
+    Route::delete('/establishment/photo/{photo}', [EstablishmentController::class, 'destroyPhoto'])->name('owner.establishments.photos.destroy');
 
     Route::post('/logout', [OwnerAuthController::class, 'logout'])->name('owner.logout');
 });

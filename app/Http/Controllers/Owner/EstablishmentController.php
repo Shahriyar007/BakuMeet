@@ -138,6 +138,30 @@ class EstablishmentController extends Controller
             ->with('status', 'İşletme bilgileriniz güncellendi.');
     }
 
+     public function destroyPhoto(EstablishmentPhoto $photo): RedirectResponse
+    {
+        $account = Auth::guard('business')->user();
+        $establishment = $account->establishment;
+
+        abort_if(! $establishment || $photo->establishment_id !== $establishment->id, 403);
+
+        $wasPrimary = $photo->is_primary;
+
+        Storage::disk('r2')->delete($photo->path);
+        $photo->delete();
+
+        if ($wasPrimary) {
+            $nextPhoto = $establishment->photos()->orderBy('sort_order')->first();
+
+            if ($nextPhoto) {
+                $nextPhoto->update(['is_primary' => true]);
+            }
+        }
+
+        return redirect()->route('owner.establishments.edit')
+            ->with('status', 'Fotoğraf silindi.');
+    }
+
       private function storePhotos(Request $request, Establishment $establishment): void
     {
         $hasExistingPrimary = $establishment->photos()->where('is_primary', true)->exists();
