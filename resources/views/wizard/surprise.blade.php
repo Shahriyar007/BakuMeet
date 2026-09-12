@@ -13,8 +13,10 @@
         @else
             <div class="card">
                 <div style="text-align: center; margin-bottom: 15px;">
-                    @if ($establishment->image)
-                        <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 250px; border-radius: 8px; object-fit: cover;">
+		@if ($establishment->primaryPhoto)
+    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 250px; border-radius: 8px; object-fit: cover;">
+@elseif ($establishment->image)
+    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 250px; border-radius: 8px; object-fit: cover;">
                     @else
                         <div style="width: 100%; height: 180px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 56px;">
                             {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
