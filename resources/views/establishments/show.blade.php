@@ -7,7 +7,9 @@
         <a href="/establishments" style="color: #3498db; text-decoration: none;">← Geri Dön</a>
  
         <div style="margin-bottom: 20px;">
-                @if ($establishment->image)
+	     @if ($establishment->primaryPhoto)
+                    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
+                @elseif ($establishment->image)
                     <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
                 @else
                     <div style="width: 100%; height: 250px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 72px;">

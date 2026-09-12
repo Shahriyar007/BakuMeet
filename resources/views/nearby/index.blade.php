@@ -93,7 +93,13 @@
                         </div>
 
                         <div>
-                            @if ($place->image)
+			@if ($place->primaryPhoto)
+                                <img
+                                    src="{{ $place->primaryPhoto->url() }}"
+                                    alt="{{ $place->name }}"
+                                    style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;"
+                                >
+                            @elseif ($place->image)
                                 <img
                                     src="{{ $place->image }}"
                                     alt="{{ $place->name }}"
