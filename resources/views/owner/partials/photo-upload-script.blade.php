@@ -35,6 +35,25 @@
         return form;
     }
 
+    function showError(statusBox, message) {
+        statusBox.textContent = '';
+        statusBox.style.background = '#ffe6e6';
+        statusBox.style.flexDirection = 'column';
+        statusBox.style.fontSize = '10px';
+        statusBox.style.padding = '4px';
+        statusBox.style.textAlign = 'center';
+        statusBox.style.overflow = 'hidden';
+
+        const icon = document.createElement('div');
+        icon.style.fontSize = '20px';
+        icon.textContent = '❌';
+        statusBox.appendChild(icon);
+
+        const msg = document.createElement('div');
+        msg.textContent = message;
+        statusBox.appendChild(msg);
+    }
+
     if (!input) return;
 
     input.addEventListener('change', function (e) {
@@ -65,15 +84,11 @@
             if (noPhotosText) noPhotosText.style.display = 'none';
 
             if (!isImage) {
-                statusBox.textContent = '⚠️';
-                statusBox.title = 'Geçerli bir resim dosyası değil';
-                statusBox.style.background = '#ffe6e6';
+                showError(statusBox, 'Geçerli bir resim dosyası değil');
                 return;
             }
             if (tooBig) {
-                statusBox.textContent = '❌';
-                statusBox.title = '5MB sınırını aşıyor';
-                statusBox.style.background = '#ffe6e6';
+                showError(statusBox, '5MB sınırını aşıyor');
                 return;
             }
 
@@ -88,15 +103,23 @@
                 headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
                 body: formData,
             })
-                .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+                .then(function (res) {
+                    return res.text().then(function (text) {
+                        let data;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (e) {
+                            data = { success: false, message: 'Sunucu hatası (HTTP ' + res.status + ')' };
+                        }
+                        return { ok: res.ok, status: res.status, data: data };
+                    });
+                })
                 .then(function (result) {
                     activeUploads--;
                     setSubmitEnabled();
 
                     if (!result.ok || !result.data.success) {
-                        statusBox.textContent = '❌';
-                        statusBox.title = (result.data && result.data.message) || 'Yükleme başarısız oldu';
-                        statusBox.style.background = '#ffe6e6';
+                        showError(statusBox, (result.data && result.data.message) || ('Hata (HTTP ' + result.status + ')'));
                         return;
                     }
 
@@ -104,12 +127,10 @@
                     item.innerHTML = '<img src="' + result.data.url + '" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">';
                     item.appendChild(makeDeleteForm(result.data.photo_id, @json(route('owner.establishments.photos.destroy', ':id')).replace(':id', '__ID__')));
                 })
-                .catch(function () {
+                .catch(function (err) {
                     activeUploads--;
                     setSubmitEnabled();
-                    statusBox.textContent = '❌';
-                    statusBox.title = 'Ağ hatası, tekrar deneyin';
-                    statusBox.style.background = '#ffe6e6';
+                    showError(statusBox, 'Ağ hatası: ' + err.message);
                 });
         });
 
