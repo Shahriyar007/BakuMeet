@@ -10,7 +10,9 @@
         <strong>BakuMeet İşletme Paneli</strong>
         @auth('business')
             <div style="display: flex; align-items: center; gap: 12px;">
-                <a href="{{ route('owner.dashboard') }}" style="color: white; text-decoration: none; font-size: 14px;">← Panele Dön</a>
+		@unless (request()->routeIs('owner.dashboard'))
+                    <a href="{{ route('owner.dashboard') }}" style="color: white; text-decoration: none; font-size: 14px;">← Panele Dön</a>
+                @endunless
                 <form method="POST" action="{{ route('owner.logout') }}" style="margin: 0;">
                     @csrf
                     <button type="submit" style="background: none; border: 1px solid white; color: white; padding: 6px 12px; border-radius: 4px;">Çıkış Yap</button>
