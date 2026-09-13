@@ -105,8 +105,13 @@
                     @method('DELETE')
                     <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
                 </form>
-                @if ($photo->is_primary)
+	    @if ($photo->is_primary)
                     <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
+                @else
+                    <form action="{{ route('owner.establishments.photos.primary', $photo) }}" method="POST" style="margin-top: 2px;">
+                        @csrf
+                        <button type="submit" style="width: 100%; font-size: 10px; padding: 2px;">Ana Fotoğraf Yap</button>
+                    </form>
                 @endif
             </div>
         @endforeach

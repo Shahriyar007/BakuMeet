@@ -24,7 +24,29 @@
             @elseif ($establishment->status === 'approved')
                 <p style="background: #e6ffed; padding: 8px; border-radius: 4px;">✅ Yayında</p>
             @elseif ($establishment->status === 'rejected')
-                <p style="background: #ffe6e6; padding: 8px; border-radius: 4px;">❌ Reddedildi</p>
+                <div style="background: #ffe6e6; padding: 8px; border-radius: 4px;">
+                    <p style="margin: 0;">❌ Reddedildi</p>
+                    @if ($establishment->rejection_reason)
+                        <p style="margin: 4px 0 0; font-size: 14px;"><strong>Sebep:</strong> {{ $establishment->rejection_reason }}</p>
+                    @endif
+                </div>
+            @endif
+
+            @if ($establishment->status === 'approved')
+                <div style="display: flex; gap: 16px; margin: 12px 0; padding: 12px; background: #f5f5f5; border-radius: 4px; text-align: center;">
+                    <div style="flex: 1;">
+                        <div style="font-size: 18px; font-weight: bold;">⭐ {{ $establishment->rating ?? '-' }}</div>
+                        <div style="font-size: 11px; color: #999;">Puan</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 18px; font-weight: bold;">💬 {{ $establishment->reviews_count }}</div>
+                        <div style="font-size: 11px; color: #999;">Yorum</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 18px; font-weight: bold;">❤️ {{ $establishment->favorited_by_count }}</div>
+                        <div style="font-size: 11px; color: #999;">Favori</div>
+                    </div>
+                </div>
             @endif
 
             <p><strong>Tür:</strong> {{ $establishment->type === 'cafe' ? 'Kafe' : 'Restoran' }}</p>
@@ -40,7 +62,7 @@
                 <p><strong>Koordinatlar:</strong> {{ $establishment->latitude }}, {{ $establishment->longitude }}</p>
             @endif
 
-	   @if ($establishment->tags->isNotEmpty())
+           @if ($establishment->tags->isNotEmpty())
                 <p><strong>Etiketler:</strong> {{ $establishment->tags->pluck('name')->join(', ') }}</p>
             @endif
 
@@ -64,7 +86,12 @@
                 </ul>
             @endif
 
-            <a href="{{ route('owner.establishments.edit') }}" style="display: inline-block; margin-top: 8px; padding: 10px 20px; background: #222; color: white; border-radius: 4px; text-decoration: none;">Düzenle</a>
+            <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                <a href="{{ route('owner.establishments.edit') }}" style="display: inline-block; padding: 10px 20px; background: #222; color: white; border-radius: 4px; text-decoration: none;">Düzenle</a>
+                @if ($establishment->status === 'approved')
+		<a href="{{ url('/establishments/'.$establishment->id) }}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #3498db; color: white; border-radius: 4px; text-decoration: none;">👁 Profili Gör</a>
+                @endif
+            </div>
         </div>
     @endif
 @endsection

@@ -208,8 +208,29 @@ class EstablishmentController extends Controller
         return response()->json([
             'success' => true,
             'photo_id' => $photo->id,
+	    'is_primary' => $photo->is_primary,
             'url' => $photo->url(),
         ]);
+    }
+
+    public function setPrimaryPhoto(EstablishmentPhoto $photo): RedirectResponse
+    {
+        $account = Auth::guard('business')->user();
+        $establishment = $account->establishment;
+
+        $belongsToEstablishment = $establishment && $photo->establishment_id === $establishment->id;
+        $belongsToAccountUnassigned = is_null($photo->establishment_id) && $photo->business_account_id === $account->id;
+
+        abort_if(! $belongsToEstablishment && ! $belongsToAccountUnassigned, 403);
+
+        $ownerQuery = $belongsToEstablishment
+            ? $establishment->photos()
+            : $account->unassignedPhotos();
+
+        $ownerQuery->update(['is_primary' => false]);
+        $photo->update(['is_primary' => true]);
+
+        return back()->with('status', 'Ana fotoğraf güncellendi.');
     }
 
     public function destroyPhoto(EstablishmentPhoto $photo): RedirectResponse

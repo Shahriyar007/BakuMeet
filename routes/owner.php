@@ -21,6 +21,7 @@ Route::middleware('auth:business')->group(function () {
     Route::get('/establishment/edit', [EstablishmentController::class, 'edit'])->name('owner.establishments.edit');
     Route::put('/establishment', [EstablishmentController::class, 'update'])->name('owner.establishments.update');
     Route::delete('/establishment/photo/{photo}', [EstablishmentController::class, 'destroyPhoto'])->name('owner.establishments.photos.destroy');
+    Route::post('/establishment/photo/{photo}/primary', [EstablishmentController::class, 'setPrimaryPhoto'])->name('owner.establishments.photos.primary');
     Route::post('/establishment/photo/upload', [EstablishmentController::class, 'uploadPhoto'])->name('owner.establishments.photos.upload');
 
     Route::post('/logout', [OwnerAuthController::class, 'logout'])->name('owner.logout');

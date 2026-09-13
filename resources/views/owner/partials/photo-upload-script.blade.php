@@ -5,6 +5,8 @@
     const submitBtn = document.getElementById('submitBtn');
     const uploadUrl = @json($uploadUrl);
     const csrfToken = @json(csrf_token());
+    const primaryUrlTemplate = @json(route('owner.establishments.photos.primary', ':id'));
+    const deleteUrlTemplate = @json(route('owner.establishments.photos.destroy', ':id'));
 
     let activeUploads = 0;
 
@@ -21,10 +23,10 @@
         submitBtn.dataset.originalText = submitBtn.textContent;
     }
 
-    function makeDeleteForm(photoId, deleteUrlTemplate) {
+    function makeDeleteForm(photoId) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = deleteUrlTemplate.replace('__ID__', photoId);
+        form.action = deleteUrlTemplate.replace(':id', photoId);
         form.style.marginTop = '4px';
         form.onsubmit = function () {
             return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');
@@ -32,6 +34,16 @@
         form.innerHTML = '<input type="hidden" name="_token" value="' + csrfToken + '">' +
             '<input type="hidden" name="_method" value="DELETE">' +
             '<button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>';
+        return form;
+    }
+
+    function makePrimaryForm(photoId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = primaryUrlTemplate.replace(':id', photoId);
+        form.style.marginTop = '2px';
+        form.innerHTML = '<input type="hidden" name="_token" value="' + csrfToken + '">' +
+            '<button type="submit" style="width: 100%; font-size: 10px; padding: 2px;">Ana Fotoğraf Yap</button>';
         return form;
     }
 
@@ -125,7 +137,16 @@
 
                     item.dataset.photoId = result.data.photo_id;
                     item.innerHTML = '<img src="' + result.data.url + '" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">';
-                    item.appendChild(makeDeleteForm(result.data.photo_id, @json(route('owner.establishments.photos.destroy', ':id')).replace(':id', '__ID__')));
+                    item.appendChild(makeDeleteForm(result.data.photo_id));
+
+                    if (result.data.is_primary) {
+                        const badge = document.createElement('span');
+                        badge.style.cssText = 'position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;';
+                        badge.textContent = 'Ana';
+                        item.appendChild(badge);
+                    } else {
+                        item.appendChild(makePrimaryForm(result.data.photo_id));
+                    }
                 })
                 .catch(function (err) {
                     activeUploads--;
