@@ -17,26 +17,78 @@
                     </div>
             @endif
 
-            @if ($establishment->photos->count() > 1)
-                <div style="display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch;">
-                    @foreach ($establishment->photos as $photo)
-                        <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" style="width: 80px; height: 80px; border-radius: 6px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid #3498db;' : '' }}" onclick="document.getElementById('mainPhoto').src = this.src;">
+	   @if ($establishment->photos->count() > 1)
+                <div id="thumbStrip" style="display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch;">
+                    @foreach ($establishment->photos as $index => $photo)
+                        <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" data-index="{{ $index }}" style="width: 80px; height: 80px; border-radius: 6px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid #3498db;' : '' }}" onclick="showPhoto({{ $index }})">
                     @endforeach
                 </div>
             @endif
 
-            <div id="lightboxOverlay" onclick="closeLightbox()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center;">
-                <img id="lightboxImg" src="" style="max-width: 95%; max-height: 95%; object-fit: contain;">
+            <div id="lightboxOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
+                <span onclick="closeLightbox()" style="position: absolute; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; z-index: 1002;">&times;</span>
+                <span onclick="prevPhoto(event)" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">‹</span>
+                <img id="lightboxImg" src="" style="max-width: 90%; max-height: 75vh; object-fit: contain;">
+                <span onclick="nextPhoto(event)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">›</span>
+
+                <div id="lightboxThumbs" style="display: flex; gap: 6px; overflow-x: auto; margin-top: 16px; max-width: 90%; padding: 4px;"></div>
             </div>
 
             <script>
-                function openLightbox(src) {
-                    document.getElementById('lightboxImg').src = src;
-                    document.getElementById('lightboxOverlay').style.display = 'flex';
+                const galleryUrls = @json($establishment->photos->map(fn($p) => $p->url())->values());
+                let currentPhotoIndex = 0;
+
+                function renderLightboxThumbs() {
+                    const container = document.getElementById('lightboxThumbs');
+                    container.innerHTML = '';
+                    galleryUrls.forEach(function (url, i) {
+                        const thumb = document.createElement('img');
+                        thumb.src = url;
+                        thumb.style.cssText = 'width: 50px; height: 50px; border-radius: 4px; object-fit: cover; flex-shrink: 0; cursor: pointer;' + (i === currentPhotoIndex ? ' border: 2px solid #3498db;' : ' opacity: 0.6;');
+                        thumb.onclick = function (e) { e.stopPropagation(); showPhoto(i); };
+                        container.appendChild(thumb);
+                    });
                 }
+
+                function showPhoto(index) {
+                    currentPhotoIndex = (index + galleryUrls.length) % galleryUrls.length;
+                    document.getElementById('lightboxImg').src = galleryUrls[currentPhotoIndex];
+                    document.getElementById('mainPhoto').src = galleryUrls[currentPhotoIndex];
+                    document.getElementById('lightboxOverlay').style.display = 'flex';
+                    renderLightboxThumbs();
+                }
+
+                function openLightbox(src) {
+                    const index = galleryUrls.indexOf(src);
+                    showPhoto(index >= 0 ? index : 0);
+                }
+
                 function closeLightbox() {
                     document.getElementById('lightboxOverlay').style.display = 'none';
                 }
+
+                function nextPhoto(e) {
+                    e.stopPropagation();
+                    showPhoto(currentPhotoIndex + 1);
+                }
+
+                function prevPhoto(e) {
+                    e.stopPropagation();
+                    showPhoto(currentPhotoIndex - 1);
+                }
+
+                // Swipe support
+                let touchStartX = 0;
+                document.getElementById('lightboxOverlay').addEventListener('touchstart', function (e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+                document.getElementById('lightboxOverlay').addEventListener('touchend', function (e) {
+                    const touchEndX = e.changedTouches[0].screenX;
+                    const diff = touchEndX - touchStartX;
+                    if (Math.abs(diff) > 50) {
+                        if (diff < 0) { showPhoto(currentPhotoIndex + 1); } else { showPhoto(currentPhotoIndex - 1); }
+                    }
+                });
             </script>
 
             <h2>{{ $establishment->name }}</h2>
