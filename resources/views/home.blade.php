@@ -47,46 +47,13 @@
     <!-- ÖNE ÇIKANLAR -->
     <h2 style="margin-bottom: 15px;">⭐ Öne Çıkanlar</h2>
     @foreach ($featured as $place)
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h3>{{ $place->name }}</h3>
-                    <p>
-                        <span class="badge {{ $place->type }}">
-                            @if ($place->type === 'restaurant')
-                                🍽️ Restoran
-                            @else
-                                ☕ Kafe
-                            @endif
-                        </span>
-                        <span class="badge">📍 {{ $place->location }}</span>
-                        <span class="badge">🎭 {{ $place->mood }}</span>
-                         @if ($place->statusText())
-                            <span class="badge" style="background-color: {{ $place->isOpenNow() ? '#2ecc71' : '#e74c3c' }}; color: white;">
-                                {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
-                            </span>
-                        @endif
-                    </p>
-                    <p><span class="rating">⭐ {{ $place->rating }}</span></p>
-                    <a href="/establishments/{{ $place->id }}" class="btn">Detaylar</a>
-                </div>
-		@if ($place->primaryPhoto)
-                    <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
-                @elseif ($place->image)
-                    <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
-                @else
-                    <div style="width: 70px; height: 70px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
-                        {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
-                    </div>
-                @endif
-            </div>
-        </div>
+        <x-establishment-card :place="$place" photo-size="70px" :show-open-status="true" />
     @endforeach
 
     <div style="text-align: center; margin: 20px 0;">
         <a href="/establishments" class="btn">Tüm İşletmeleri Gör →</a>
     </div>
-      
+
      <!-- KOLEKSİYONLAR ÖNİZLEME -->
     <h2 style="margin-bottom: 15px;">📚 Koleksiyonlar</h2>
     @foreach ($collections as $collection)

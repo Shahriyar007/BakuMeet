@@ -45,7 +45,7 @@
                     </select>
                 </div>
 
-      		<div>
+                <div>
                     <label for="tag"><strong>Özellik:</strong></label><br>
                     <select name="tag" id="tag" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
                         <option value="">-- Tümü --</option>
@@ -73,64 +73,20 @@
                 <p>Sonuç bulunamadı.</p>
             </div>
         @else
-           @foreach ($establishments as $place)
-                <div class="card">
-                    <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 13px; color: #3498db;">
-                        <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
-                        Karşılaştırmaya ekle
-                    </label>
-                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div>
-                            <h3>{{ $place->name }}</h3>
-
-                            <p>
-                                <span class="badge {{ $place->type }}">
-                                    @if ($place->type === 'restaurant')
-                                        🍽️ Restoran
-                                    @elseif ($place->type === 'cafe')
-                                        ☕ Kafe
-                                    @endif
-                                </span>
-                                <span class="badge">📍 {{ $place->location }}</span>
-                                <span class="badge">🎭 {{ $place->mood }}</span>
-                                <span class="badge">{{ str_repeat('₼', $place->price_range) }}</span>
-                                @if ($place->statusText())
-                                    <span class="badge" style="background-color: {{ $place->isOpenNow() ? '#2ecc71' : '#e74c3c' }}; color: white;">
-                                    @foreach ($place->tags as $tag)
-                                    <span class="badge">{{ $tag->emoji }} {{ $tag->name }}</span>
-                                @endforeach
-    {{ $place->isOpenNow() ? '🟢' : '🔴' }} {{ $place->statusText() }}
-                                    </span>
-                                @endif 
-  </p>
-
-                            @if ($place->description)
-                                <p><strong>Açıklama:</strong> {{ Str::limit($place->description, 100) }}</p>
-                            @endif
-
-                            <p>
-                                <strong>Puanı:</strong>
-                                <span class="rating">⭐ {{ $place->rating ?? 'Henüz puanlanmamış' }}</span>
-                            </p>
-
-                            <a href="/establishments/{{ $place->id }}" class="btn">Detaylar</a>
-                        </div>
-
-                        <div>
-			@if ($place->primaryPhoto)
-                                <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
-                            @elseif ($place->image)
-                                <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
-                            @else
-                                <div style="width: 150px; height: 150px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 48px;">
-                                    {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+            @foreach ($establishments as $place)
+                <label style="display: flex; align-items: center; gap: 6px; margin: 15px 0 4px; font-size: 13px; color: #3498db;">
+                    <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
+                    Karşılaştırmaya ekle
+                </label>
+                <x-establishment-card
+                    :place="$place"
+                    photo-size="150px"
+                    :show-open-status="true"
+                    :show-tags="true"
+                    :show-description="true"
+                />
             @endforeach
-@endif
+        @endif
     </div>
 
     <div id="compare-bar" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #2c3e50; padding: 12px; text-align: center; z-index: 100;">
@@ -175,6 +131,5 @@
         }
 
         checkboxes.forEach(cb => cb.addEventListener('change', updateCompareBar));
-
-	</script>
+    </script>
 @endsection

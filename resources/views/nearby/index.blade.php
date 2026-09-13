@@ -53,66 +53,7 @@
             </div>
         @else
             @foreach ($establishments as $place)
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
-                        <div>
-                            <h3>{{ $place->name }}</h3>
-
-                            <p>
-                                <span class="badge {{ $place->type === 'restaurant' ? 'restaurant' : 'cafe' }}">
-                                    @if ($place->type === 'restaurant')
-                                        🍽️ Restoran
-                                    @elseif ($place->type === 'cafe')
-                                        ☕ Kafe
-                                    @else
-                                        📍 {{ ucfirst($place->type) }}
-                                    @endif
-                                </span>
-
-                                <span class="badge">📍 {{ $place->neighborhood ?? 'Baku' }}</span>
-
-                                <span class="badge">🎭 {{ $place->mood ?? 'Genel' }}</span>
-
-                                <span class="badge">{{ str_repeat('₼', $place->price_range) }}</span>
-
-                                <span class="badge" style="background-color: #2ecc71; color: white;">
-                                    🚶 {{ $place->distance_km }} km
-                                </span>
-                            </p>
-
-                            <p>
-                                <strong>Puanı:</strong>
-                                <span class="rating">
-                                    ⭐ {{ $place->rating ?? 'Henüz puanlanmamış' }}
-                                </span>
-                            </p>
-
-                            <a href="/establishments/{{ $place->id }}" class="btn">
-                                Detaylar
-                            </a>
-                        </div>
-
-                        <div>
-			@if ($place->primaryPhoto)
-                                <img
-                                    src="{{ $place->primaryPhoto->url() }}"
-                                    alt="{{ $place->name }}"
-                                    style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;"
-                                >
-                            @elseif ($place->image)
-                                <img
-                                    src="{{ $place->image }}"
-                                    alt="{{ $place->name }}"
-                                    style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;"
-                                >
-                            @else
-                                <div style="width: 150px; height: 150px; border-radius: 8px; background-color: {{ $place->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 48px;">
-                                    {{ $place->type === 'restaurant' ? '🍽️' : '☕' }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <x-establishment-card :place="$place" photo-size="150px" :show-distance="true" />
             @endforeach
         @endif
     @endif
