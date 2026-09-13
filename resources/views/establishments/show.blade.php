@@ -6,16 +6,38 @@
     <div>
         <a href="/establishments" style="color: #3498db; text-decoration: none;">← Geri Dön</a>
  
-        <div style="margin-bottom: 20px;">
-	     @if ($establishment->primaryPhoto)
-                    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
+	  <div style="margin-bottom: 20px;">
+             @if ($establishment->primaryPhoto)
+                    <img id="mainPhoto" src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
                 @elseif ($establishment->image)
-                    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;">
+                    <img id="mainPhoto" src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
                 @else
                     <div style="width: 100%; height: 250px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 72px;">
                         {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
                     </div>
             @endif
+
+            @if ($establishment->photos->count() > 1)
+                <div style="display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch;">
+                    @foreach ($establishment->photos as $photo)
+                        <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" style="width: 80px; height: 80px; border-radius: 6px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid #3498db;' : '' }}" onclick="document.getElementById('mainPhoto').src = this.src;">
+                    @endforeach
+                </div>
+            @endif
+
+            <div id="lightboxOverlay" onclick="closeLightbox()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center;">
+                <img id="lightboxImg" src="" style="max-width: 95%; max-height: 95%; object-fit: contain;">
+            </div>
+
+            <script>
+                function openLightbox(src) {
+                    document.getElementById('lightboxImg').src = src;
+                    document.getElementById('lightboxOverlay').style.display = 'flex';
+                }
+                function closeLightbox() {
+                    document.getElementById('lightboxOverlay').style.display = 'none';
+                }
+            </script>
 
             <h2>{{ $establishment->name }}</h2>
 
