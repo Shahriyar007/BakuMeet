@@ -12,6 +12,7 @@ class EstablishmentPhoto extends Model
 
     protected $fillable = [
         'establishment_id',
+        'business_account_id',
         'path',
         'is_primary',
         'sort_order',
@@ -25,6 +26,11 @@ class EstablishmentPhoto extends Model
     public function establishment()
     {
         return $this->belongsTo(Establishment::class);
+    }
+
+    public function businessAccount()
+    {
+        return $this->belongsTo(BusinessAccount::class);
     }
 
     public function url(): string

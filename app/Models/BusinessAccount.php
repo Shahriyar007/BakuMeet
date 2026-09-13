@@ -27,6 +27,11 @@ class BusinessAccount extends Authenticatable
         return $this->belongsTo(Establishment::class);
     }
 
+    public function unassignedPhotos()
+    {
+        return $this->hasMany(EstablishmentPhoto::class)->whereNull('establishment_id')->orderBy('sort_order');
+    }
+
     public function isApproved(): bool
     {
         return $this->status === 'approved';

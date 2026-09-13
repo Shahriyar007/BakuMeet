@@ -13,7 +13,13 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('owner.establishments.update') }}" enctype="multipart/form-data">
+    @if (session('status'))
+        <div style="background: #e6ffe6; padding: 10px; border-radius: 4px; margin-bottom: 12px;">
+            <p style="margin: 0;">{{ session('status') }}</p>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('owner.establishments.update') }}">
         @csrf
         @method('PUT')
         <div style="margin-bottom: 12px;">
@@ -85,69 +91,29 @@
             </div>
         @endforeach
 
-<h3>Yeni Fotoğraf Ekle (en fazla 5, her biri max 5MB)</h3>
-        <input type="file" id="photoInput" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
-        <div id="photoPreviewList" style="margin-bottom: 12px;"></div>
-
-        <script>
-            document.getElementById('photoInput').addEventListener('change', function (e) {
-                const list = document.getElementById('photoPreviewList');
-                list.innerHTML = '';
-
-                const files = Array.from(e.target.files);
-
-                if (files.length === 0) {
-                    return;
-                }
-
-                if (files.length > 5) {
-                    const warning = document.createElement('p');
-                    warning.style.color = 'red';
-                    warning.textContent = 'En fazla 5 fotoğraf seçebilirsiniz. Şu an ' + files.length + ' dosya seçili.';
-                    list.appendChild(warning);
-                }
-
-                files.forEach(function (file) {
-                    const row = document.createElement('div');
-                    row.style.padding = '4px 0';
-
-                    const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-                    const tooBig = file.size > 5 * 1024 * 1024;
-                    const isImage = file.type.startsWith('image/');
-
-                    const icon = (!isImage) ? '⚠️' : (tooBig ? '❌' : '✅');
-                    const color = (!isImage || tooBig) ? 'red' : 'green';
-
-                    row.style.color = color;
-                    row.textContent = icon + ' ' + file.name + ' (' + sizeMb + ' MB)' +
-                        (tooBig ? ' — 5MB sınırını aşıyor, yüklenmeyecek' : '') +
-                        (!isImage ? ' — geçerli bir resim dosyası değil' : '');
-
-                    list.appendChild(row);
-                });
-            });
-        </script>
-        <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Güncelle</button>
+        <button type="submit" id="submitBtn" style="padding: 10px 20px; margin-top: 12px;">Güncelle</button>
     </form>
 
-    <h3>Mevcut Fotoğraflar</h3>
+    <h3 style="margin-top: 24px;">Fotoğraflar (en fazla 5, her biri max 5MB)</h3>
+    <input type="file" id="photoInput" accept="image/*" multiple style="margin-bottom: 12px;">
+    <div id="photoGrid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+        @foreach ($establishment->photos as $photo)
+            <div class="photo-item" data-photo-id="{{ $photo->id }}" style="position: relative; width: 100px;">
+                <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                <form action="{{ route('owner.establishments.photos.destroy', $photo) }}" method="POST" style="margin-top: 4px;" onsubmit="return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
+                </form>
+                @if ($photo->is_primary)
+                    <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
+                @endif
+            </div>
+        @endforeach
+    </div>
     @if ($establishment->photos->isEmpty())
-        <p>Henüz fotoğraf eklenmedi.</p>
-    @else
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-            @foreach ($establishment->photos as $photo)
-                <div style="position: relative; width: 100px;">
-                    <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                    <form action="{{ route('owner.establishments.photos.destroy', $photo) }}" method="POST" style="margin-top: 4px;" onsubmit="return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
-                    </form>
-                    @if ($photo->is_primary)
-                        <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
-                    @endif
-                </div>
-            @endforeach
-        </div>
+        <p id="noPhotosText">Henüz fotoğraf eklenmedi.</p>
     @endif
+
+    @include('owner.partials.photo-upload-script', ['uploadUrl' => route('owner.establishments.photos.upload')])
 @endsection

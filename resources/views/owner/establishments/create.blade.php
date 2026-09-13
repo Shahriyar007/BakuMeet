@@ -13,7 +13,7 @@
         </div>
     @endif
 
-	<form method="POST" action="{{ route('owner.establishments.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('owner.establishments.store') }}">
         @csrf
         <div style="margin-bottom: 12px;">
             <label>İşletme Adı</label><br>
@@ -80,9 +80,29 @@
             </div>
         @endforeach
 
-	<h3>Fotoğraflar (en fazla 5, her biri max 5MB)</h3>
-        <input type="file" name="photos[]" multiple accept="image/*" style="margin-bottom: 12px;">
-
-        <button type="submit" style="padding: 10px 20px; margin-top: 12px;">Kaydet</button>
+        <button type="submit" id="submitBtn" style="padding: 10px 20px; margin-top: 12px;">Kaydet</button>
     </form>
+
+    <h3 style="margin-top: 24px;">Fotoğraflar (en fazla 5, her biri max 5MB)</h3>
+    <input type="file" id="photoInput" accept="image/*" multiple style="margin-bottom: 12px;">
+    <div id="photoGrid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+        @foreach ($pendingPhotos as $photo)
+            <div class="photo-item" data-photo-id="{{ $photo->id }}" style="position: relative; width: 100px;">
+                <img src="{{ $photo->url() }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                <form action="{{ route('owner.establishments.photos.destroy', $photo) }}" method="POST" style="margin-top: 4px;" onsubmit="return confirm('Bu fotoğrafı silmek istediğinize emin misiniz?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width: 100%; font-size: 12px; color: red;">Sil</button>
+                </form>
+                @if ($photo->is_primary)
+                    <span style="position: absolute; top: 2px; left: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px;">Ana</span>
+                @endif
+            </div>
+        @endforeach
+    </div>
+    @if ($pendingPhotos->isEmpty())
+        <p id="noPhotosText">Henüz fotoğraf eklenmedi.</p>
+    @endif
+
+    @include('owner.partials.photo-upload-script', ['uploadUrl' => route('owner.establishments.photos.upload')])
 @endsection

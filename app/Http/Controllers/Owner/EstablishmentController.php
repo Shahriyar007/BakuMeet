@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Establishment;
 use App\Models\Tag;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +25,13 @@ class EstablishmentController extends Controller
 
         Gate::forUser($account)->authorize('create', Establishment::class);
 
-        return view('owner.establishments.create', ['tags' => Tag::all()]);
+        return view('owner.establishments.create', [
+            'tags' => Tag::all(),
+            'pendingPhotos' => $account->unassignedPhotos,
+        ]);
     }
 
-     public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $account = Auth::guard('business')->user();
 
@@ -66,6 +70,10 @@ class EstablishmentController extends Controller
                 $establishment->tags()->sync($validated['tags']);
             }
 
+            // Attach any photos already uploaded via AJAX before the form was submitted
+            $account->unassignedPhotos()->update(['establishment_id' => $establishment->id]);
+
+            // Fallback: legacy synchronous upload path, in case JS was unavailable
             if ($request->hasFile('photos')) {
                 $this->storePhotos($request, $establishment);
             }
@@ -81,7 +89,7 @@ class EstablishmentController extends Controller
     public function edit()
     {
         $account = Auth::guard('business')->user();
-	$establishment = $account->establishment->load('photos', 'tags');
+        $establishment = $account->establishment->load('photos', 'tags');
 
         Gate::forUser($account)->authorize('update', $establishment);
 
@@ -92,7 +100,7 @@ class EstablishmentController extends Controller
         ]);
     }
 
-     public function update(Request $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         $account = Auth::guard('business')->user();
         $establishment = $account->establishment;
@@ -129,6 +137,7 @@ class EstablishmentController extends Controller
 
             $establishment->tags()->sync($validated['tags'] ?? []);
 
+            // Fallback: legacy synchronous upload path, in case JS was unavailable
             if ($request->hasFile('photos')) {
                 $this->storePhotos($request, $establishment);
             }
@@ -138,31 +147,101 @@ class EstablishmentController extends Controller
             ->with('status', 'İşletme bilgileriniz güncellendi.');
     }
 
-     public function destroyPhoto(EstablishmentPhoto $photo): RedirectResponse
+    /**
+     * AJAX endpoint: upload a single photo immediately on selection.
+     * If the account has no establishment yet (create flow), the photo is
+     * stored unassigned (business_account_id set, establishment_id null)
+     * and gets attached to the establishment once store() runs.
+     * If the account already has an establishment (edit flow), the photo
+     * is attached directly.
+     */
+    public function uploadPhoto(Request $request): JsonResponse
+    {
+        $account = Auth::guard('business')->user();
+
+        $request->validate([
+            'photo' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $establishment = $account->establishment;
+
+        if ($establishment) {
+            Gate::forUser($account)->authorize('update', $establishment);
+        }
+
+        $existingCount = $establishment
+            ? $establishment->photos()->count()
+            : $account->unassignedPhotos()->count();
+
+        if ($existingCount >= 5) {
+            return response()->json([
+                'success' => false,
+                'message' => 'En fazla 5 fotoğraf yükleyebilirsiniz.',
+            ], 422);
+        }
+
+        $file = $request->file('photo');
+        $ownerSegment = $establishment ? $establishment->id : 'pending-'.$account->id;
+        $path = 'establishments/'.$ownerSegment.'/'.Str::random(20).'.'.$file->getClientOriginalExtension();
+
+        try {
+            Storage::disk('r2')->put($path, file_get_contents($file));
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Fotoğraf sunucuya yüklenemedi. Lütfen tekrar deneyin.',
+            ], 500);
+        }
+
+        $hasExistingPrimary = $establishment
+            ? $establishment->photos()->where('is_primary', true)->exists()
+            : $account->unassignedPhotos()->where('is_primary', true)->exists();
+
+        $photo = EstablishmentPhoto::create([
+            'establishment_id' => $establishment?->id,
+            'business_account_id' => $establishment ? null : $account->id,
+            'path' => $path,
+            'is_primary' => ! $hasExistingPrimary,
+            'sort_order' => $existingCount,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'photo_id' => $photo->id,
+            'url' => $photo->url(),
+        ]);
+    }
+
+    public function destroyPhoto(EstablishmentPhoto $photo): RedirectResponse
     {
         $account = Auth::guard('business')->user();
         $establishment = $account->establishment;
 
-        abort_if(! $establishment || $photo->establishment_id !== $establishment->id, 403);
+        $belongsToEstablishment = $establishment && $photo->establishment_id === $establishment->id;
+        $belongsToAccountUnassigned = is_null($photo->establishment_id) && $photo->business_account_id === $account->id;
+
+        abort_if(! $belongsToEstablishment && ! $belongsToAccountUnassigned, 403);
 
         $wasPrimary = $photo->is_primary;
+        $ownerQuery = $belongsToEstablishment
+            ? $establishment->photos()
+            : $account->unassignedPhotos();
 
         Storage::disk('r2')->delete($photo->path);
         $photo->delete();
 
         if ($wasPrimary) {
-            $nextPhoto = $establishment->photos()->orderBy('sort_order')->first();
+            $nextPhoto = $ownerQuery->orderBy('sort_order')->first();
 
             if ($nextPhoto) {
                 $nextPhoto->update(['is_primary' => true]);
             }
         }
 
-        return redirect()->route('owner.establishments.edit')
-            ->with('status', 'Fotoğraf silindi.');
+        return back()->with('status', 'Fotoğraf silindi.');
     }
 
-      private function storePhotos(Request $request, Establishment $establishment): void
+    private function storePhotos(Request $request, Establishment $establishment): void
     {
         $hasExistingPrimary = $establishment->photos()->where('is_primary', true)->exists();
 
@@ -182,7 +261,7 @@ class EstablishmentController extends Controller
         }
     }
 
-	private function buildOpeningHours(Request $request): array
+    private function buildOpeningHours(Request $request): array
     {
         $hours = [];
 
