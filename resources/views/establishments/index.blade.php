@@ -3,96 +3,83 @@
 @section('title', 'İşletmeler - BakuMeet')
 
 @section('content')
-    <div>
-        <h2>İşletmeler Listesi</h2>
+    <div style="padding-top: 16px;">
+        <p class="heading" style="font-size: var(--text-title); margin-bottom: 12px;">İşletmeler</p>
 
-        <!-- FILTRE FORMU -->
-        <div class="card" style="background-color: #ecf0f1; margin-bottom: 20px;">
-            <h3>Filtre</h3>
-            <form action="/filter" method="GET" style="display: grid; gap: 10px;">
-                <div>
-                    <label for="location"><strong>Semt Seç:</strong></label><br>
-                    <select name="location" id="location" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
-                        <option value="">-- Tümü --</option>
-                        <option value="Sabail">Sabail</option>
-                        <option value="Nizami">Nizami</option>
-                        <option value="Bayıl">Bayıl</option>
-                        <option value="Yasamal">Yasamal</option>
-                        <option value="İçərişəhər">İçərişəhər (Eski Şehir)</option>
-                        <option value="Nərimanov">Nərimanov</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="mood"><strong>Ruh Hali Seç:</strong></label><br>
-                    <select name="mood" id="mood" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
-                        <option value="">-- Tümü --</option>
-                        <option value="romantik">💕 Romantik</option>
-                        <option value="sakin">🧘 Sakin</option>
-                        <option value="canlı">🎉 Canlı</option>
-                        <option value="lüks">👑 Lüks</option>
-                        <option value="bütçedostu">💰 Bütçe Dostu</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="price_range"><strong>Fiyat Aralığı:</strong></label><br>
-                    <select name="price_range" id="price_range" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
-                        <option value="">-- Tümü --</option>
-                        <option value="1">₼ Ucuz</option>
-                        <option value="2">₼₼ Orta</option>
-                        <option value="3">₼₼₼ Pahalı</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="tag"><strong>Özellik:</strong></label><br>
-                    <select name="tag" id="tag" style="padding: 8px; font-size: 14px; width: 100%; margin-top: 5px;">
-                        <option value="">-- Tümü --</option>
-                        @foreach (\App\Models\Tag::all() as $tagOption)
-                            <option value="{{ $tagOption->id }}">{{ $tagOption->emoji }} {{ $tagOption->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button type="submit" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">
-                    🔍 Filtrele
-                </button>
-            </form>
-        </div>
+        <form action="/filter" method="GET" style="margin-bottom: 14px;">
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                <select name="location" onchange="this.form.submit()" class="bk-chip" style="border: 0.5px solid var(--color-border); flex-shrink: 0;">
+                    <option value="">Semt</option>
+                    <option value="Sabail">Sabail</option>
+                    <option value="Nizami">Nizami</option>
+                    <option value="Bayıl">Bayıl</option>
+                    <option value="Yasamal">Yasamal</option>
+                    <option value="İçərişəhər">İçərişəhər</option>
+                    <option value="Nərimanov">Nərimanov</option>
+                </select>
+                <select name="mood" onchange="this.form.submit()" class="bk-chip" style="border: 0.5px solid var(--color-border); flex-shrink: 0;">
+                    <option value="">Ruh hali</option>
+                    <option value="romantik">Romantik</option>
+                    <option value="sakin">Sakin</option>
+                    <option value="canlı">Canlı</option>
+                    <option value="lüks">Lüks</option>
+                    <option value="bütçedostu">Bütçe dostu</option>
+                </select>
+                <select name="price_range" onchange="this.form.submit()" class="bk-chip" style="border: 0.5px solid var(--color-border); flex-shrink: 0;">
+                    <option value="">Fiyat</option>
+                    <option value="1">₼</option>
+                    <option value="2">₼₼</option>
+                    <option value="3">₼₼₼</option>
+                </select>
+                <select name="tag" onchange="this.form.submit()" class="bk-chip" style="border: 0.5px solid var(--color-border); flex-shrink: 0;">
+                    <option value="">Özellik</option>
+                    @foreach (\App\Models\Tag::all() as $tagOption)
+                        <option value="{{ $tagOption->id }}">{{ $tagOption->emoji }} {{ $tagOption->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </form>
 
         @if (isset($filter))
-            <p style="color: #27ae60; margin: 15px 0; font-size: 14px;">
-                📌 Filtre: <strong>{{ $filter }}</strong>
-                <a href="/establishments" style="color: #e74c3c;">Filtresi Kaldır</a>
-            </p>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <span class="bk-chip bk-chip--active">{{ $filter }}</span>
+                <a href="/establishments" style="font-size: var(--text-meta); color: var(--color-danger); text-decoration: none;">Filtreyi kaldır</a>
+            </div>
         @endif
 
+        <p style="font-size: var(--text-meta); color: var(--color-text-secondary); margin-bottom: 14px;">{{ $establishments->count() }} sonuç</p>
+
         @if ($establishments->isEmpty())
-            <div class="card" style="background-color: #fff3cd; border-left: 4px solid #f39c12;">
-                <p>Sonuç bulunamadı.</p>
+            <div class="bk-card" style="padding: 28px 20px; text-align: center;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--color-accent-tint); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+                    <i class="ti ti-search-off" style="font-size: 24px; color: var(--color-accent);" aria-hidden="true"></i>
+                </div>
+                <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); margin-bottom: 4px;">Sonuç bulunamadı</p>
+                <p style="font-size: var(--text-meta); color: var(--color-text-secondary);">Farklı bir filtre dene.</p>
             </div>
         @else
             @foreach ($establishments as $place)
-                <label style="display: flex; align-items: center; gap: 6px; margin: 15px 0 4px; font-size: 13px; color: #3498db;">
-                    <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
-                    Karşılaştırmaya ekle
-                </label>
-                <x-establishment-card
-                    :place="$place"
-                    photo-size="150px"
-                    :show-open-status="true"
-                    :show-tags="true"
-                    :show-description="true"
-                />
+                <div style="position: relative;">
+                    <label style="position: absolute; top: 10px; left: 10px; z-index: 1; display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: var(--radius-chip); font-size: var(--text-micro); color: var(--color-text-muted);">
+                        <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
+                        Karşılaştır
+                    </label>
+                    <x-establishment-card
+                        :place="$place"
+                        photo-size="150px"
+                        :show-open-status="true"
+                        :show-tags="true"
+                        :show-description="true"
+                    />
+                </div>
             @endforeach
         @endif
     </div>
 
-    <div id="compare-bar" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #2c3e50; padding: 12px; text-align: center; z-index: 100;">
-      <button type="button" onclick="goToCompare()" style="padding: 10px 20px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            ⚖️ Karşılaştır (<span id="compare-count">0</span>)
-        </button>
+    <div id="compare-bar" style="display: none; position: fixed; bottom: 70px; left: 0; right: 0; max-width: 480px; margin: 0 auto; padding: 0 16px; z-index: 30;">
+        <div class="bk-btn-primary" onclick="goToCompare()" style="width: 100%;">
+            <i class="ti ti-arrows-left-right" aria-hidden="true"></i>Karşılaştır (<span id="compare-count">0</span>)
+        </div>
     </div>
 
     <script>

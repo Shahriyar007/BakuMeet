@@ -3,306 +3,260 @@
 @section('title', $establishment->name . ' - BakuMeet')
 
 @section('content')
-    <div>
-        <a href="/establishments" style="color: #3498db; text-decoration: none;">← Geri Dön</a>
- 
-	  <div style="margin-bottom: 20px;">
-             @if ($establishment->primaryPhoto)
-                    <img id="mainPhoto" src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
-                @elseif ($establishment->image)
-                    <img id="mainPhoto" src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
-                @else
-                    <div style="width: 100%; height: 250px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 72px;">
-                        {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
-                    </div>
-            @endif
-
-	   @if ($establishment->photos->count() > 1)
-                <div id="thumbStrip" style="display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch;">
-                    @foreach ($establishment->photos as $index => $photo)
-                        <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" data-index="{{ $index }}" style="width: 80px; height: 80px; border-radius: 6px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid #3498db;' : '' }}" onclick="showPhoto({{ $index }})">
-                    @endforeach
-                </div>
-            @endif
-
-            <div id="lightboxOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
-                <span onclick="closeLightbox()" style="position: absolute; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; z-index: 1002;">&times;</span>
-                <span onclick="prevPhoto(event)" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">‹</span>
-                <img id="lightboxImg" src="" style="max-width: 90%; max-height: 75vh; object-fit: contain;">
-                <span onclick="nextPhoto(event)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">›</span>
-
-                <div id="lightboxThumbs" style="display: flex; gap: 6px; overflow-x: auto; margin-top: 16px; max-width: 90%; padding: 4px;"></div>
+    <div style="margin: 0 -16px;">
+        @if ($establishment->primaryPhoto)
+            <img id="mainPhoto" src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; height: 220px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
+        @elseif ($establishment->image)
+            <img id="mainPhoto" src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; height: 220px; object-fit: cover; cursor: zoom-in;" onclick="openLightbox(this.src)">
+        @else
+            <div class="bk-photo-placeholder" style="width: 100%; height: 220px;">
+                <i class="ti {{ $establishment->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 40px;" aria-hidden="true"></i>
             </div>
+        @endif
 
-            <script>
-                const galleryUrls = @json($establishment->photos->map(fn($p) => $p->url())->values());
-                let currentPhotoIndex = 0;
-
-                function renderLightboxThumbs() {
-                    const container = document.getElementById('lightboxThumbs');
-                    container.innerHTML = '';
-                    galleryUrls.forEach(function (url, i) {
-                        const thumb = document.createElement('img');
-                        thumb.src = url;
-                        thumb.style.cssText = 'width: 50px; height: 50px; border-radius: 4px; object-fit: cover; flex-shrink: 0; cursor: pointer;' + (i === currentPhotoIndex ? ' border: 2px solid #3498db;' : ' opacity: 0.6;');
-                        thumb.onclick = function (e) { e.stopPropagation(); showPhoto(i); };
-                        container.appendChild(thumb);
-                    });
-                }
-
-                function showPhoto(index) {
-                    currentPhotoIndex = (index + galleryUrls.length) % galleryUrls.length;
-                    document.getElementById('lightboxImg').src = galleryUrls[currentPhotoIndex];
-                    document.getElementById('mainPhoto').src = galleryUrls[currentPhotoIndex];
-                    document.getElementById('lightboxOverlay').style.display = 'flex';
-                    renderLightboxThumbs();
-                }
-
-                function openLightbox(src) {
-                    const index = galleryUrls.indexOf(src);
-                    showPhoto(index >= 0 ? index : 0);
-                }
-
-                function closeLightbox() {
-                    document.getElementById('lightboxOverlay').style.display = 'none';
-                }
-
-                function nextPhoto(e) {
-                    e.stopPropagation();
-                    showPhoto(currentPhotoIndex + 1);
-                }
-
-                function prevPhoto(e) {
-                    e.stopPropagation();
-                    showPhoto(currentPhotoIndex - 1);
-                }
-
-                // Swipe support
-                let touchStartX = 0;
-                document.getElementById('lightboxOverlay').addEventListener('touchstart', function (e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                });
-                document.getElementById('lightboxOverlay').addEventListener('touchend', function (e) {
-                    const touchEndX = e.changedTouches[0].screenX;
-                    const diff = touchEndX - touchStartX;
-                    if (Math.abs(diff) > 50) {
-                        if (diff < 0) { showPhoto(currentPhotoIndex + 1); } else { showPhoto(currentPhotoIndex - 1); }
-                    }
-                });
-            </script>
-
-            <h2>{{ $establishment->name }}</h2>
-
-            <button onclick="shareEstablishment()" style="padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; background-color: #ecf0f1; color: #333; margin-bottom: 8px;">
-                🔗 Paylaş
-            </button>
-
-                @auth
-                <form action="/establishments/{{ $establishment->id }}/favorite" method="POST" style="display: inline;">
-                    @csrf
-                    @php
-                        $isFavorited = auth()->user()->favorites()->where('establishment_id', $establishment->id)->exists();
-                    @endphp
-                    <button type="submit" style="padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; background-color: {{ $isFavorited ? '#e74c3c' : '#ecf0f1' }}; color: {{ $isFavorited ? 'white' : '#333' }};">
-                        {{ $isFavorited ? '❤️ Favorilerde' : '🤍 Favorilere Ekle' }}
-                    </button>
-                </form>
-            @endauth
-            <div style="margin: 15px 0;">
-                <span class="badge {{ $establishment->type }}">
-                    @if ($establishment->type === 'restaurant')
-                        🍽️ Restoran
-                    @elseif ($establishment->type === 'cafe')
-                        ☕ Kafe
-                    @endif
-                </span>
-                <span class="badge">📍 {{ $establishment->location }}</span>
-                <span class="badge">🎭 {{ $establishment->mood }}</span>
-                @foreach ($establishment->tags as $tag)
-                    <span class="badge">{{ $tag->emoji }} {{ $tag->name }}</span>
+        @if ($establishment->photos->count() > 1)
+            <div id="thumbStrip" style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; -webkit-overflow-scrolling: touch;">
+                @foreach ($establishment->photos as $index => $photo)
+                    <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" data-index="{{ $index }}" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid var(--color-accent);' : '' }}" onclick="showPhoto({{ $index }})">
                 @endforeach
-  		</div>
-            
-            <p style="margin: 15px 0; font-size: 16px;">
-                <strong>Puanı:</strong> 
-                <span class="rating">⭐ {{ $establishment->rating ?? 'Henüz puanlanmamış' }}</span>
-            </p>
-            
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">Açıklama</h3>
-            <p>{{ $establishment->description ?? 'Açıklama bulunmamaktadır.' }}</p>
-            
-<h3 style="margin-top: 20px; margin-bottom: 10px;">Konum Bilgileri</h3>
-            <p>
-                <strong>Semt:</strong> {{ $establishment->location }}<br>
-            </p>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">🕒 Çalışma Saatleri</h3>
-            @if ($establishment->opening_hours)
-                @php
-                    $dayNames = [
-                        'monday' => 'Pazartesi', 'tuesday' => 'Salı', 'wednesday' => 'Çarşamba',
-                        'thursday' => 'Perşembe', 'friday' => 'Cuma', 'saturday' => 'Cumartesi', 'sunday' => 'Pazar',
-                    ];
-                    $isOpen = $establishment->isOpenNow();
-                @endphp
-
-                <p style="margin-bottom: 10px;">
-                    @if ($isOpen === true)
-                        <span class="badge" style="background-color: #2ecc71; color: white;">🟢 Şu an açık</span>
-                    @elseif ($isOpen === false)
-                        <span class="badge" style="background-color: #e74c3c; color: white;">🔴 Şu an kapalı</span>
-                    @endif
-                </p>
-
-                <table style="width: 100%; border-collapse: collapse;">
-                    @foreach ($dayNames as $key => $label)
-                        @php $day = $establishment->opening_hours[$key] ?? null; @endphp
-                        <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 6px 0;">{{ $label }}</td>
-                            <td style="padding: 6px 0; text-align: right;">
-                                @if (!$day || ($day['closed'] ?? false))
-                                    <span style="color: #999;">Kapalı</span>
-                                @else
-                                    {{ $day['open'] }} - {{ $day['close'] }}
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </table>
-            @else
-                <p style="color: #999;"><em>Çalışma saatleri henüz eklenmedi.</em></p>
-            @endif
-
-      @if ($establishment->latitude && $establishment->longitude)
-                <h3 style="margin-top: 20px; margin-bottom: 10px;">🗺️ Haritada Konum</h3>
-		<div id="show-map" style="width: 100%; max-width: 500px; height: 160px; border-radius: 8px; margin: 0 auto;"></div>
-                <p style="text-align: center; margin-top: 6px; font-size: 13px;">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $establishment->latitude }},{{ $establishment->longitude }}" target="_blank" class="btn" style="display: inline-block; margin-top: 8px;">
-                        🧭 Yol Tarifi Al
-                    </a>
-                </p>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
-<!-- YORUMLAR BÖLÜMÜ -->
-        <div class="card" style="margin-top: 20px;">
-            <h3>💬 Yorumlar</h3>
-            
-            @auth
-<form action="/establishments/{{ $establishment->id }}/reviews" method="POST" style="margin: 15px 0; display: grid; gap: 10px;">
-                    @csrf
-                    <div>
-                        <label><strong>🎭 Atmosfer:</strong></label><br>
-                        <select name="atmosphere_rating" required style="padding: 8px; width: 100%;">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label><strong>🍽️ Yemek/Ürün:</strong></label><br>
-                        <select name="food_rating" required style="padding: 8px; width: 100%;">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label><strong>🙋 Servis:</strong></label><br>
-                        <select name="service_rating" required style="padding: 8px; width: 100%;">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label><strong>💰 Fiyat/Performans:</strong></label><br>
-                        <select name="value_rating" required style="padding: 8px; width: 100%;">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label><strong>Yorumunuz:</strong></label><br>
-                        <textarea name="comment" required maxlength="500" rows="3" style="padding: 8px; width: 100%;"></textarea>
-                    </div>
-                    <button type="submit" style="padding: 10px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Yorum Ekle
-                    </button>
-                </form> 
-        
-			@else
-                              <p style="margin: 15px 0;">
-                    Yorum yazmak için <a href="/login">giriş yapın</a>.
-                </p>
-            @endauth
-            
-              @forelse ($establishment->reviews as $review)
-                <div style="border-top: 1px solid #eee; padding: 15px 0;">
-                    <strong>{{ $review->user->name }}</strong>
-                    <span class="rating">{{ str_repeat('⭐', $review->rating) }} ({{ $review->rating }}/5)</span>
-                    @if ($review->atmosphere_rating)
-                        <p style="font-size: 12px; color: #999; margin-top: 4px;">
-                            🎭 Atmosfer: {{ $review->atmosphere_rating }} ·
-                            🍽️ Yemek: {{ $review->food_rating }} ·
-                            🙋 Servis: {{ $review->service_rating }} ·
-                            💰 Fiyat: {{ $review->value_rating }}
-                        </p>
-                    @endif
-                    <p style="margin-top: 5px;">{{ $review->comment }}</p>
-                    <small style="color: #999;">{{ $review->created_at->diffForHumans() }}</small>                    
-                    @auth
-                        @if (auth()->id() === $review->user_id)
-                            <form action="/reviews/{{ $review->id }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 12px;">Sil</button>
-                            </form>
-                        @endif
-                    @endauth
+
+    <div id="lightboxOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
+        <span onclick="closeLightbox()" style="position: absolute; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; z-index: 1002;">&times;</span>
+        <span onclick="prevPhoto(event)" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">‹</span>
+        <img id="lightboxImg" src="" style="max-width: 90%; max-height: 75vh; object-fit: contain;">
+        <span onclick="nextPhoto(event)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 8px 16px; z-index: 1001; user-select: none;">›</span>
+        <div id="lightboxThumbs" style="display: flex; gap: 6px; overflow-x: auto; margin-top: 16px; max-width: 90%; padding: 4px;"></div>
+    </div>
+
+    <div style="padding-top: 14px;">
+        <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 4px;">
+            <p class="heading" style="font-size: var(--text-title); flex: 1;">{{ $establishment->name }}</p>
+            <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                <div onclick="shareEstablishment()" style="width: 34px; height: 34px; border-radius: 50%; background: var(--color-bg-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <i class="ti ti-share" style="font-size: 16px; color: var(--color-text-secondary);" aria-hidden="true"></i>
                 </div>
-            @empty
-                <p style="color: #999; margin: 15px 0;">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
-            @endforelse
+                @auth
+                    @php $isFavorited = auth()->user()->favorites()->where('establishment_id', $establishment->id)->exists(); @endphp
+                    <form action="/establishments/{{ $establishment->id }}/favorite" method="POST">
+                        @csrf
+                        <button type="submit" style="width: 34px; height: 34px; border-radius: 50%; background: {{ $isFavorited ? 'var(--color-accent-tint)' : 'var(--color-bg-muted)' }}; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i class="ti {{ $isFavorited ? 'ti-heart-filled' : 'ti-heart' }}" style="font-size: 16px; color: var(--color-accent);" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                @endauth
+            </div>
         </div>
+        <p style="font-size: var(--text-secondary); color: var(--color-text-secondary); margin-bottom: 12px;">{{ $establishment->location }}</p>
+
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 4px;">
+                <i class="ti ti-star" style="color: var(--color-accent); font-size: 15px;" aria-hidden="true"></i>
+                <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium);">{{ $establishment->rating ?? '-' }}</span>
+                <span style="font-size: var(--text-meta); color: var(--color-text-secondary);">({{ $establishment->reviews->count() }})</span>
+            </div>
+            @if ($establishment->price_range)
+                <span style="font-size: var(--text-secondary); color: var(--color-text-secondary);">{{ str_repeat('₼', $establishment->price_range) }}</span>
+            @endif
+            @php $isOpen = $establishment->isOpenNow(); @endphp
+            @if ($isOpen !== null)
+                <span class="bk-chip {{ $isOpen ? 'bk-badge--success' : 'bk-badge--danger' }}">{{ $isOpen ? 'Şu an açık' : 'Şu an kapalı' }}</span>
+            @endif
+        </div>
+
+        @if ($establishment->description)
+            <div class="bk-reason-box" style="margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <i class="ti ti-sparkles" style="font-size: 14px;" aria-hidden="true"></i>
+                    <span style="font-size: var(--text-meta); font-weight: var(--weight-medium);">Neden BakuMeet öneriyor</span>
+                </div>
+                {{ $establishment->description }}
+            </div>
+        @endif
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;">
+            <span class="bk-chip">{{ $establishment->mood }}</span>
+            @foreach ($establishment->tags as $tag)
+                <span class="bk-chip">{{ $tag->emoji }} {{ $tag->name }}</span>
+            @endforeach
+        </div>
+
+        @if ($establishment->opening_hours)
+            @php
+                $dayNames = ['monday' => 'Pazartesi', 'tuesday' => 'Salı', 'wednesday' => 'Çarşamba', 'thursday' => 'Perşembe', 'friday' => 'Cuma', 'saturday' => 'Cumartesi', 'sunday' => 'Pazar'];
+            @endphp
+            <div class="bk-card" style="padding: 12px 14px; margin-bottom: 14px;">
+                @foreach ($dayNames as $key => $label)
+                    @php $day = $establishment->opening_hours[$key] ?? null; @endphp
+                    <div style="display: flex; justify-content: space-between; padding: 6px 0; {{ !$loop->last ? 'border-bottom: 0.5px solid var(--color-border);' : '' }}">
+                        <span style="font-size: var(--text-secondary); color: var(--color-text);">{{ $label }}</span>
+                        @if (!$day || ($day['closed'] ?? false))
+                            <span style="font-size: var(--text-secondary); color: var(--color-text-secondary);">Kapalı</span>
+                        @else
+                            <span style="font-size: var(--text-secondary); color: var(--color-success);">{{ $day['open'] }} - {{ $day['close'] }}</span>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        @if ($establishment->latitude && $establishment->longitude)
+            <div id="show-map" style="width: 100%; height: 160px; border-radius: var(--radius-card); margin-bottom: 12px;"></div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $establishment->latitude }},{{ $establishment->longitude }}" target="_blank" class="bk-btn-primary" style="width: 100%; margin-bottom: 24px;">
+                <i class="ti ti-map-pin" aria-hidden="true"></i>Yol tarifi al
+            </a>
+        @endif
+
+        <div style="display: flex; align-items: center; gap: 14px; background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: var(--radius-card); padding: 14px; margin-bottom: 14px;">
+            <div style="text-align: center; flex-shrink: 0;">
+                <p class="heading" style="font-size: 24px;">{{ $establishment->rating ?? '-' }}</p>
+                <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">{{ $establishment->reviews->count() }} yorum</p>
+            </div>
+        </div>
+
+        @auth
+            <form action="/establishments/{{ $establishment->id }}/reviews" method="POST" class="bk-card" style="padding: 14px; margin-bottom: 14px; display: grid; gap: 10px;">
+                @csrf
+                <div>
+                    <p style="font-size: var(--text-meta); color: var(--color-text-muted); margin-bottom: 4px;">Atmosfer</p>
+                    <select name="atmosphere_rating" required class="bk-input" style="width: 100%;">
+                        <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="font-size: var(--text-meta); color: var(--color-text-muted); margin-bottom: 4px;">Yemek / ürün</p>
+                    <select name="food_rating" required class="bk-input" style="width: 100%;">
+                        <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="font-size: var(--text-meta); color: var(--color-text-muted); margin-bottom: 4px;">Servis</p>
+                    <select name="service_rating" required class="bk-input" style="width: 100%;">
+                        <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="font-size: var(--text-meta); color: var(--color-text-muted); margin-bottom: 4px;">Fiyat / performans</p>
+                    <select name="value_rating" required class="bk-input" style="width: 100%;">
+                        <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="font-size: var(--text-meta); color: var(--color-text-muted); margin-bottom: 4px;">Yorumun</p>
+                    <textarea name="comment" required maxlength="500" rows="3" class="bk-input" style="width: 100%;"></textarea>
+                </div>
+                <button type="submit" class="bk-btn-primary" style="width: 100%;">Yorum yaz</button>
+            </form>
+        @else
+            <div class="bk-card" style="padding: 14px; margin-bottom: 14px; text-align: center;">
+                <p style="font-size: var(--text-secondary); color: var(--color-text-secondary);">Yorum yazmak için <a href="/login" style="color: var(--color-accent);">giriş yap</a></p>
+            </div>
+        @endauth
+
+        @forelse ($establishment->reviews as $review)
+            <div class="bk-card" style="padding: 12px 14px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--color-bg-muted); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--color-text-muted);">{{ strtoupper(substr($review->user->name, 0, 1)) }}</div>
+                    <span style="font-size: var(--text-meta); font-weight: var(--weight-medium); color: var(--color-text);">{{ $review->user->name }}</span>
+                    <span style="font-size: var(--text-micro); color: var(--color-text-secondary);">· {{ $review->created_at->diffForHumans() }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 6px;">
+                    <i class="ti ti-star" style="color: var(--color-accent); font-size: 12px;" aria-hidden="true"></i>
+                    <span style="font-size: var(--text-meta); color: var(--color-text);">{{ $review->rating }}/5</span>
+                </div>
+                <p style="font-size: var(--text-secondary); color: var(--color-text-muted); margin-bottom: 6px;">{{ $review->comment }}</p>
+                @auth
+                    @if (auth()->id() === $review->user_id)
+                        <form action="/reviews/{{ $review->id }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background: none; border: none; color: var(--color-danger); font-size: var(--text-micro); cursor: pointer; padding: 0;">Sil</button>
+                        </form>
+                    @endif
+                @endauth
+            </div>
+        @empty
+            <div class="bk-card" style="padding: 20px; text-align: center; margin-bottom: 14px;">
+                <p style="font-size: var(--text-secondary); color: var(--color-text-secondary);">Henüz yorum yok. İlk yorumu sen yaz!</p>
+            </div>
+        @endforelse
+    </div>
 @endsection
+
 @push('scripts')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-@if ($establishment->latitude && $establishment->longitude)
 <script>
-    const showMap = L.map('show-map').setView([{{ $establishment->latitude }}, {{ $establishment->longitude }}], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(showMap);
-    L.marker([{{ $establishment->latitude }}, {{ $establishment->longitude }}]).addTo(showMap)
-        .bindPopup('{{ addslashes($establishment->name) }}');
-</script>
-@endif
-<script>
+    const galleryUrls = @json($establishment->photos->map(fn($p) => $p->url())->values());
+    let currentPhotoIndex = 0;
+
+    function renderLightboxThumbs() {
+        const container = document.getElementById('lightboxThumbs');
+        if (!container) return;
+        container.innerHTML = '';
+        galleryUrls.forEach(function (url, i) {
+            const thumb = document.createElement('img');
+            thumb.src = url;
+            thumb.style.cssText = 'width: 50px; height: 50px; border-radius: 4px; object-fit: cover; flex-shrink: 0; cursor: pointer;' + (i === currentPhotoIndex ? ' border: 2px solid var(--color-accent);' : ' opacity: 0.6;');
+            thumb.onclick = function (e) { e.stopPropagation(); showPhoto(i); };
+            container.appendChild(thumb);
+        });
+    }
+
+    function showPhoto(index) {
+        currentPhotoIndex = (index + galleryUrls.length) % galleryUrls.length;
+        document.getElementById('lightboxImg').src = galleryUrls[currentPhotoIndex];
+        document.getElementById('mainPhoto').src = galleryUrls[currentPhotoIndex];
+        document.getElementById('lightboxOverlay').style.display = 'flex';
+        renderLightboxThumbs();
+    }
+
+    function openLightbox(src) {
+        const index = galleryUrls.indexOf(src);
+        showPhoto(index >= 0 ? index : 0);
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightboxOverlay').style.display = 'none';
+    }
+
+    function nextPhoto(e) { e.stopPropagation(); showPhoto(currentPhotoIndex + 1); }
+    function prevPhoto(e) { e.stopPropagation(); showPhoto(currentPhotoIndex - 1); }
+
+    let touchStartX = 0;
+    document.getElementById('lightboxOverlay').addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    document.getElementById('lightboxOverlay').addEventListener('touchend', function (e) {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > 50) {
+            if (diff < 0) { showPhoto(currentPhotoIndex + 1); } else { showPhoto(currentPhotoIndex - 1); }
+        }
+    });
+
     function shareEstablishment() {
         const shareData = {
             title: '{{ addslashes($establishment->name) }} - BakuMeet',
             text: '{{ addslashes($establishment->name) }} mekanına göz at!',
             url: window.location.href
         };
-
         if (navigator.share) {
             navigator.share(shareData).catch(() => {});
         } else {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Link kopyalandı!');
-            });
+            navigator.clipboard.writeText(window.location.href).then(() => { alert('Link kopyalandı!'); });
         }
     }
+
+    @if ($establishment->latitude && $establishment->longitude)
+    const showMap = L.map('show-map').setView([{{ $establishment->latitude }}, {{ $establishment->longitude }}], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(showMap);
+    L.marker([{{ $establishment->latitude }}, {{ $establishment->longitude }}]).addTo(showMap)
+        .bindPopup('{{ addslashes($establishment->name) }}');
+    @endif
 </script>
 @endpush
