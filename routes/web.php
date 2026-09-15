@@ -14,6 +14,9 @@ use App\Http\Controllers\EstablishmentController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/giris', function () {
+    return view('auth-gate');
+})->name('auth.gate');
 
 Route::get('/establishments', [EstablishmentController::class, 'index']);
 Route::get('/establishments/{id}', [EstablishmentController::class, 'show']);

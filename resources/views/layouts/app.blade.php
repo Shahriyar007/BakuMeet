@@ -37,7 +37,7 @@
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </a>
         @else
-            <a href="{{ route('login') }}" class="bk-chip bk-chip--active" style="text-decoration: none;">Giriş yap</a>
+	<a href="{{ route('auth.gate') }}" class="bk-chip bk-chip--active" style="text-decoration: none;">Giriş yap</a>
         @endauth
     </header>
 
@@ -74,7 +74,7 @@
                     <i class="ti ti-user" style="font-size: 20px;" aria-hidden="true"></i>Profil
                 </a>
             @else
-                <a href="{{ route('login') }}" class="bk-bottom-nav__item" style="text-decoration: none;">
+		<a href="{{ route('auth.gate') }}" class="bk-bottom-nav__item" style="text-decoration: none;">
                     <i class="ti ti-user" style="font-size: 20px;" aria-hidden="true"></i>Giriş
                 </a>
             @endauth
