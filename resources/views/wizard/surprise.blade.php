@@ -3,58 +3,55 @@
 @section('title', 'Sürpriz Bana - BakuMeet')
 
 @section('content')
-    <div>
-        <h2>🎲 Sürpriz Bana</h2>
+    <div style="padding-top: 16px;">
+        <p class="heading" style="font-size: var(--text-title); margin-bottom: 16px;">
+            <i class="ti ti-dice" style="color: var(--color-accent); font-size: 18px;" aria-hidden="true"></i> Sürpriz bana
+        </p>
 
         @if (!$establishment)
-            <div class="card" style="background-color: #fff3cd; border-left: 4px solid #f39c12;">
-                <p>Şu an önerecek bir mekan bulunamadı.</p>
+            <div class="bk-card" style="padding: 28px 20px; text-align: center;">
+                <p style="font-size: var(--text-secondary); color: var(--color-text-secondary);">Şu an önerecek bir mekan bulunamadı.</p>
             </div>
         @else
-            <div class="card">
-                <div style="text-align: center; margin-bottom: 15px;">
-		@if ($establishment->primaryPhoto)
-    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 250px; border-radius: 8px; object-fit: cover;">
-@elseif ($establishment->image)
-    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; max-height: 250px; border-radius: 8px; object-fit: cover;">
-                    @else
-                        <div style="width: 100%; height: 180px; border-radius: 8px; background-color: {{ $establishment->type === 'restaurant' ? '#fce4e4' : '#e4f7e9' }}; display: flex; align-items: center; justify-content: center; font-size: 56px;">
-                            {{ $establishment->type === 'restaurant' ? '🍽️' : '☕' }}
-                        </div>
-                    @endif
-                </div>
-
-                <h3 style="text-align: center;">{{ $establishment->name }}</h3>
-
-                <p style="text-align: center; margin: 10px 0;">
-                    <span class="badge {{ $establishment->type }}">
-                        @if ($establishment->type === 'restaurant')
-                            🍽️ Restoran
-                        @else
-                            ☕ Kafe
-                        @endif
-                    </span>
-                    <span class="badge">📍 {{ $establishment->location }}</span>
-                    <span class="badge">🎭 {{ $establishment->mood }}</span>
-                    <span class="badge">{{ str_repeat('₼', $establishment->price_range) }}</span>
-                </p>
-
-                <p style="text-align: center;"><span class="rating">⭐ {{ $establishment->rating ?? 'Henüz puanlanmamış' }}</span></p>
-
-                @if ($establishment->description)
-                    <p style="margin: 15px 0;">{{ Str::limit($establishment->description, 150) }}</p>
+            <div class="bk-card" style="margin-bottom: 16px;">
+                @if ($establishment->primaryPhoto)
+                    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                @elseif ($establishment->image)
+                    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                @else
+                    <div class="bk-photo-placeholder" style="width: 100%; height: 200px;">
+                        <i class="ti {{ $establishment->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 36px;" aria-hidden="true"></i>
+                    </div>
                 @endif
 
-                <div style="text-align: center; margin-top: 15px;">
-                    <a href="/establishments/{{ $establishment->id }}" class="btn">Detaylar</a>
+                <div style="padding: 16px; text-align: center;">
+                    <p class="heading" style="font-size: 18px; margin-bottom: 8px;">{{ $establishment->name }}</p>
+
+                    <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+                        <span class="bk-chip">{{ $establishment->type === 'restaurant' ? 'Restoran' : 'Kafe' }}</span>
+                        <span class="bk-chip">{{ $establishment->location }}</span>
+                        <span class="bk-chip">{{ $establishment->mood }}</span>
+                        @if ($establishment->price_range)
+                            <span class="bk-chip">{{ str_repeat('₼', $establishment->price_range) }}</span>
+                        @endif
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 12px;">
+                        <i class="ti ti-star" style="color: var(--color-accent); font-size: 14px;" aria-hidden="true"></i>
+                        <span style="font-size: var(--text-secondary); color: var(--color-text);">{{ $establishment->rating ?? 'Henüz puanlanmamış' }}</span>
+                    </div>
+
+                    @if ($establishment->description)
+                        <p style="font-size: var(--text-secondary); color: var(--color-text-muted); margin-bottom: 14px;">{{ Str::limit($establishment->description, 150) }}</p>
+                    @endif
+
+                    <a href="/establishments/{{ $establishment->id }}" class="bk-btn-primary" style="display: inline-flex;">Detaylar</a>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="/surprise" style="padding: 12px 20px; background-color: #3498db; color: white; border-radius: 4px; text-decoration: none; display: inline-block;">
-                    🎲 Tekrar Dene
-                </a>
-            </div>
+            <a href="/surprise" class="bk-btn-secondary" style="width: 100%; display: flex;">
+                <i class="ti ti-dice" aria-hidden="true"></i>Tekrar dene
+            </a>
         @endif
     </div>
 @endsection

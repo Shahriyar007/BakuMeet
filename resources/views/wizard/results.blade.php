@@ -3,13 +3,15 @@
 @section('title', 'Önerilerin - BakuMeet')
 
 @section('content')
-    <div>
-        <a href="/wizard" style="color: #3498db; text-decoration: none;">← Tekrar Dene</a>
-        <h2>✨ Senin İçin Önerdiklerimiz</h2>
+    <div style="padding-top: 16px;">
+        <a href="/wizard" style="display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-meta); margin-bottom: 8px;">
+            <i class="ti ti-arrow-left" aria-hidden="true"></i>Tekrar dene
+        </a>
+        <p class="heading" style="font-size: var(--text-title); margin-bottom: 16px;">Senin için önerdiklerimiz</p>
 
         @if ($establishments->isEmpty())
-            <div class="card" style="background-color: #fff3cd; border-left: 4px solid #f39c12;">
-                <p>Bu kriterlere uygun mekan bulunamadı. Farklı seçeneklerle tekrar dene.</p>
+            <div class="bk-card" style="padding: 28px 20px; text-align: center;">
+                <p style="font-size: var(--text-secondary); color: var(--color-text-secondary);">Bu kriterlere uygun mekan bulunamadı. Farklı seçeneklerle tekrar dene.</p>
             </div>
         @else
             @foreach ($establishments as $index => $place)

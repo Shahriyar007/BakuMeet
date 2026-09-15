@@ -3,50 +3,48 @@
 @section('title', $location . ' - BakuMeet')
 
 @section('content')
-    <div>
-        <a href="/areas" style="color: #3498db; text-decoration: none;">← Bölgelere Dön</a>
-        <h2>📍 {{ $location }}</h2>
+    <div style="padding-top: 16px;">
+        <a href="/areas" style="display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-meta); margin-bottom: 8px;">
+            <i class="ti ti-arrow-left" aria-hidden="true"></i>Bölgelere dön
+        </a>
+        <p class="heading" style="font-size: var(--text-title); margin-bottom: 14px;">{{ $location }}</p>
 
-        <div class="card" style="display: flex; justify-content: space-around; text-align: center; margin: 15px 0;">
+        <div class="bk-card" style="display: flex; justify-content: space-around; text-align: center; padding: 14px; margin-bottom: 16px;">
             <div>
-                <div style="font-size: 22px; font-weight: bold; color: #3498db;">{{ $stats['total'] }}</div>
-                <div style="font-size: 12px; color: #999;">Toplam Mekan</div>
+                <p class="heading" style="font-size: 18px; color: var(--color-accent);">{{ $stats['total'] }}</p>
+                <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Toplam mekan</p>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: bold; color: #3498db;">{{ $stats['restaurants'] }}</div>
-                <div style="font-size: 12px; color: #999;">Restoran</div>
+                <p class="heading" style="font-size: 18px; color: var(--color-accent);">{{ $stats['restaurants'] }}</p>
+                <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Restoran</p>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: bold; color: #3498db;">{{ $stats['cafes'] }}</div>
-                <div style="font-size: 12px; color: #999;">Kafe</div>
+                <p class="heading" style="font-size: 18px; color: var(--color-accent);">{{ $stats['cafes'] }}</p>
+                <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Kafe</p>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: bold; color: #3498db;">⭐ {{ $stats['avg_rating'] }}</div>
-                <div style="font-size: 12px; color: #999;">Ort. Puan</div>
+                <p class="heading" style="font-size: 18px; color: var(--color-accent);">{{ $stats['avg_rating'] }}</p>
+                <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Ort. puan</p>
             </div>
         </div>
 
         @if ($mapData->isNotEmpty())
-            <div id="area-map" style="width: 100%; height: 250px; border-radius: 8px; margin-bottom: 20px;"></div>
+            <div id="area-map" style="width: 100%; height: 200px; border-radius: var(--radius-card); margin-bottom: 16px;"></div>
         @endif
 
         @if ($collections->isNotEmpty())
-            <h3 style="margin: 20px 0 10px;">📚 {{ $location }} İçin Koleksiyonlar</h3>
+            <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: 10px;">{{ $location }} için koleksiyonlar</p>
             @foreach ($collections as $collection)
                 <a href="/collections/{{ $collection->id }}" style="text-decoration: none;">
-                    <div class="card">
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <div style="font-size: 28px;">{{ $collection->emoji }}</div>
-                            <div>
-                                <h3 style="font-size: 15px;">{{ $collection->title }}</h3>
-                            </div>
-                        </div>
+                    <div class="bk-card" style="padding: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">{{ $collection->emoji }}</div>
+                        <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text);">{{ $collection->title }}</span>
                     </div>
                 </a>
             @endforeach
         @endif
 
-        <h3 style="margin: 20px 0 10px;">Mekanlar</h3>
+        <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text); margin: 16px 0 10px;">Mekanlar</p>
         @foreach ($establishments as $place)
             <x-establishment-card :place="$place" :show-location="false" />
         @endforeach
