@@ -3,93 +3,83 @@
 @section('title', 'Panel')
 
 @section('content')
-    <h1>Merhaba, {{ $account->name }}</h1>
+    <p style="font-size: var(--text-meta); color: var(--color-text-secondary); margin-bottom: 2px;">Merhaba,</p>
+    <p class="heading" style="font-size: var(--text-title); margin-bottom: 18px;">{{ $account->name }}</p>
 
     @if ($account->isPending())
-        <div style="background: #fff8e1; padding: 16px; border-radius: 6px;">
-            <p><strong>Başvurunuz inceleniyor.</strong></p>
-            <p>Onaylandığında bu sayfadan işletmenizi ekleyebileceksiniz.</p>
+        <div class="bk-card" style="padding: 24px 20px; text-align: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-warning-tint); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <i class="ti ti-clock" style="font-size: 22px; color: var(--color-warning);" aria-hidden="true"></i>
+            </div>
+            <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: 4px;">Başvurun inceleniyor</p>
+            <p style="font-size: var(--text-meta); color: var(--color-text-secondary);">Onaylandığında işletmeni ekleyebileceksin.</p>
         </div>
     @elseif (! $establishment)
-        <div style="background: #e6f4ff; padding: 16px; border-radius: 6px;">
-            <p>Hesabınız onaylandı. Henüz bir işletme eklemediniz.</p>
-            <a href="{{ route('owner.establishments.create') }}" style="display: inline-block; margin-top: 8px; padding: 10px 20px; background: #222; color: white; border-radius: 4px; text-decoration: none;">+ İşletme Ekle</a>
+        <div class="bk-card" style="padding: 24px 20px; text-align: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-accent-tint); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <i class="ti ti-building-store" style="font-size: 22px; color: var(--color-accent);" aria-hidden="true"></i>
+            </div>
+            <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: 4px;">Hesabın onaylandı</p>
+            <p style="font-size: var(--text-meta); color: var(--color-text-secondary); margin-bottom: 14px;">Şimdi işletmeni ekleyip fotoğraflarını yükleyebilirsin.</p>
+            <a href="{{ route('owner.establishments.create') }}" class="bk-btn-primary" style="display: inline-flex;">
+                <i class="ti ti-plus" aria-hidden="true"></i>İşletme ekle
+            </a>
         </div>
     @else
-        <div style="background: white; padding: 16px; border-radius: 6px;">
-            <h2>{{ $establishment->name }}</h2>
+        <div class="bk-card" style="padding: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <p class="heading" style="font-size: var(--text-card-title);">{{ $establishment->name }}</p>
+                @if ($establishment->status === 'pending')
+                    <span class="bk-chip bk-badge--warning">Onay bekliyor</span>
+                @elseif ($establishment->status === 'approved')
+                    <span class="bk-chip bk-badge--success">Yayında</span>
+                @elseif ($establishment->status === 'rejected')
+                    <span class="bk-chip bk-badge--danger">Reddedildi</span>
+                @endif
+            </div>
 
-            @if ($establishment->status === 'pending')
-                <p style="background: #fff8e1; padding: 8px; border-radius: 4px;">⏳ Onay bekleniyor</p>
-            @elseif ($establishment->status === 'approved')
-                <p style="background: #e6ffed; padding: 8px; border-radius: 4px;">✅ Yayında</p>
-            @elseif ($establishment->status === 'rejected')
-                <div style="background: #ffe6e6; padding: 8px; border-radius: 4px;">
-                    <p style="margin: 0;">❌ Reddedildi</p>
-                    @if ($establishment->rejection_reason)
-                        <p style="margin: 4px 0 0; font-size: 14px;"><strong>Sebep:</strong> {{ $establishment->rejection_reason }}</p>
-                    @endif
+            @if ($establishment->status === 'rejected' && $establishment->rejection_reason)
+                <div style="background: var(--color-danger-tint); border-radius: var(--radius-control); padding: 10px 12px; margin-bottom: 12px;">
+                    <p style="font-size: var(--text-micro); font-weight: var(--weight-medium); color: var(--color-danger-text-on-tint); margin-bottom: 2px;">Sebep</p>
+                    <p style="font-size: var(--text-meta); color: var(--color-danger-text-on-tint);">{{ $establishment->rejection_reason }}</p>
                 </div>
             @endif
 
             @if ($establishment->status === 'approved')
-                <div style="display: flex; gap: 16px; margin: 12px 0; padding: 12px; background: #f5f5f5; border-radius: 4px; text-align: center;">
-                    <div style="flex: 1;">
-                        <div style="font-size: 18px; font-weight: bold;">⭐ {{ $establishment->rating ?? '-' }}</div>
-                        <div style="font-size: 11px; color: #999;">Puan</div>
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <div style="flex: 1; background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 3px;">
+                            <i class="ti ti-star" style="font-size: 13px; color: var(--color-accent);" aria-hidden="true"></i>
+                            <span style="font-size: 14px; font-weight: var(--weight-medium);">{{ $establishment->rating ?? '-' }}</span>
+                        </div>
+                        <p style="font-size: 10px; color: var(--color-text-secondary); margin-top: 2px;">Puan</p>
                     </div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 18px; font-weight: bold;">💬 {{ $establishment->reviews_count }}</div>
-                        <div style="font-size: 11px; color: #999;">Yorum</div>
+                    <div style="flex: 1; background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                        <p style="font-size: 14px; font-weight: var(--weight-medium);">{{ $establishment->reviews_count }}</p>
+                        <p style="font-size: 10px; color: var(--color-text-secondary); margin-top: 2px;">Yorum</p>
                     </div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 18px; font-weight: bold;">❤️ {{ $establishment->favorited_by_count }}</div>
-                        <div style="font-size: 11px; color: #999;">Favori</div>
+                    <div style="flex: 1; background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                        <p style="font-size: 14px; font-weight: var(--weight-medium);">{{ $establishment->favorited_by_count }}</p>
+                        <p style="font-size: 10px; color: var(--color-text-secondary); margin-top: 2px;">Favori</p>
                     </div>
                 </div>
             @endif
 
-            <p><strong>Tür:</strong> {{ $establishment->type === 'cafe' ? 'Kafe' : 'Restoran' }}</p>
-            <p><strong>Mood:</strong> {{ $establishment->mood }}</p>
-            <p><strong>Konum:</strong> {{ $establishment->location }}</p>
-            <p><strong>Fiyat Aralığı:</strong> {{ str_repeat('₼', $establishment->price_range) }}</p>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: var(--text-secondary); color: var(--color-text-muted); margin-bottom: 12px;">
+                <p>{{ $establishment->type === 'cafe' ? 'Kafe' : 'Restoran' }} · {{ $establishment->mood }} · {{ $establishment->location }}</p>
+                @if ($establishment->description)
+                    <p style="color: var(--color-text-secondary);">{{ Str::limit($establishment->description, 100) }}</p>
+                @endif
+            </div>
 
-            @if ($establishment->description)
-                <p><strong>Açıklama:</strong><br>{{ $establishment->description }}</p>
-            @endif
-
-            @if ($establishment->latitude && $establishment->longitude)
-                <p><strong>Koordinatlar:</strong> {{ $establishment->latitude }}, {{ $establishment->longitude }}</p>
-            @endif
-
-           @if ($establishment->tags->isNotEmpty())
-                <p><strong>Etiketler:</strong> {{ $establishment->tags->pluck('name')->join(', ') }}</p>
-            @endif
-
-            @if ($establishment->opening_hours)
-                <p><strong>Çalışma Saatleri:</strong></p>
-                <ul style="margin: 0 0 12px; padding-left: 20px;">
-                    @php
-                        $dayLabels = ['monday' => 'Pazartesi', 'tuesday' => 'Salı', 'wednesday' => 'Çarşamba', 'thursday' => 'Perşembe', 'friday' => 'Cuma', 'saturday' => 'Cumartesi', 'sunday' => 'Pazar'];
-                    @endphp
-                    @foreach ($dayLabels as $key => $label)
-                        @php $day = $establishment->opening_hours[$key] ?? null; @endphp
-                        <li>
-                            {{ $label }}:
-                            @if (! $day || ($day['closed'] ?? false))
-                                Kapalı
-                            @else
-                                {{ $day['open'] }} - {{ $day['close'] }}
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-
-            <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
-                <a href="{{ route('owner.establishments.edit') }}" style="display: inline-block; padding: 10px 20px; background: #222; color: white; border-radius: 4px; text-decoration: none;">Düzenle</a>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="{{ route('owner.establishments.edit') }}" class="bk-btn-primary" style="flex: 1; min-height: auto; padding: 10px;">
+                    <i class="ti ti-edit" aria-hidden="true"></i>Düzenle
+                </a>
                 @if ($establishment->status === 'approved')
-		<a href="{{ url('/establishments/'.$establishment->id) }}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #3498db; color: white; border-radius: 4px; text-decoration: none;">👁 Profili Gör</a>
+                    <a href="{{ url('/establishments/'.$establishment->id) }}" target="_blank" class="bk-btn-secondary" style="flex: 1; min-height: auto; padding: 10px;">
+                        <i class="ti ti-eye" aria-hidden="true"></i>Profili gör
+                    </a>
                 @endif
             </div>
         </div>

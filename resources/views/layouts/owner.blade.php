@@ -4,26 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'İşletme Paneli') - BakuMeet</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
+    <style>
+        body { background: var(--color-bg-muted) !important; }
+    </style>
 </head>
-<body style="font-family: sans-serif; margin: 0; background: #f5f5f5;">
-<header style="background: #222; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
-        <strong>BakuMeet İşletme Paneli</strong>
+<body>
+    <header style="background: var(--color-bg-muted); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid var(--color-border-muted);">
+        <span class="heading" style="font-size: 16px;">BakuMeet işletme paneli</span>
         @auth('business')
             <div style="display: flex; align-items: center; gap: 12px;">
-		@unless (request()->routeIs('owner.dashboard'))
-                    <a href="{{ route('owner.dashboard') }}" style="color: white; text-decoration: none; font-size: 14px;">← Panele Dön</a>
+                @unless (request()->routeIs('owner.dashboard'))
+                    <a href="{{ route('owner.dashboard') }}" style="color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-meta); display: flex; align-items: center; gap: 4px;">
+                        <i class="ti ti-arrow-left" aria-hidden="true"></i>Panel
+                    </a>
                 @endunless
                 <form method="POST" action="{{ route('owner.logout') }}" style="margin: 0;">
                     @csrf
-                    <button type="submit" style="background: none; border: 1px solid white; color: white; padding: 6px 12px; border-radius: 4px;">Çıkış Yap</button>
+                    <button type="submit" class="bk-btn-secondary" style="min-height: auto; padding: 6px 12px; font-size: var(--text-meta);">Çıkış yap</button>
                 </form>
             </div>
         @endauth
     </header>
 
-    <main style="max-width: 600px; margin: 20px auto; padding: 0 16px;">
+    <main style="max-width: 480px; margin: 0 auto; padding: 16px;">
         @if (session('status'))
-            <p style="background: #e6ffed; padding: 10px; border-radius: 4px;">{{ session('status') }}</p>
+            <div class="bk-card" style="background: var(--color-success-tint); border-color: var(--color-success); padding: 12px 14px; margin-bottom: 14px;">
+                <p style="font-size: var(--text-secondary); color: var(--color-success-text-on-tint);">{{ session('status') }}</p>
+            </div>
         @endif
 
         @yield('content')
