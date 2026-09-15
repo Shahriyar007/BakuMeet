@@ -1,47 +1,40 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <p class="heading" style="font-size: 22px; margin-bottom: 4px; text-align: center;">Tekrar hoş geldin</p>
+    <p style="font-size: var(--text-secondary); color: var(--color-text-secondary); text-align: center; margin-bottom: 20px;">Favorilerin ve önerilerin seni bekliyor</p>
+
+    <x-auth-session-status :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div style="margin-bottom: 14px;">
+            <x-input-label for="email" value="E-posta" />
+            <x-text-input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div style="margin-bottom: 10px;">
+            <x-input-label for="password" value="Şifre" />
+            <x-text-input id="password" type="password" name="password" required autocomplete="current-password" />
+            <x-input-error :messages="$errors->get('password')" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div style="text-align: right; margin-bottom: 18px;">
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Şifremi unuttum</a>
+            @endif
+        </div>
+
+        <x-primary-button style="width: 100%; margin-bottom: 14px;">Giriş yap</x-primary-button>
+
+        <div style="text-align: center;">
+            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-meta); color: var(--color-text-secondary);">
+                <input type="checkbox" name="remember">Beni hatırla
             </label>
         </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
     </form>
+
+    <p style="font-size: var(--text-secondary); color: var(--color-text-secondary); text-align: center; margin-top: 18px;">
+        Hesabın yok mu? <a href="{{ route('register') }}" style="color: var(--color-accent); font-weight: var(--weight-medium); text-decoration: none;">Kayıt ol</a>
+    </p>
 </x-guest-layout>
