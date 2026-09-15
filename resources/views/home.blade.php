@@ -3,98 +3,138 @@
 @section('title', 'BakuMeet - Bakü\'de Bugün Nereye Gidelim?')
 
 @section('content')
-    <!-- HERO -->
-    <div style="text-align: center; padding: 30px 15px; background: linear-gradient(135deg, #2c3e50, #3498db); border-radius: 8px; color: white; margin-bottom: 25px;">
-        <h1 style="font-size: 24px; margin-bottom: 10px;">Bakü'de Bugün Nereye Gidelim?</h1>
-        <p style="font-size: 14px; opacity: 0.9;">Ruh haline göre en iyi restoran ve kafeleri keşfet</p>
+
+    <div style="padding-top: 16px;">
+        <p class="heading" style="font-size: var(--text-hero); line-height: 1.3; margin-bottom: 4px;">Bu akşam nereye gidelim?</p>
+        <p style="font-size: var(--text-secondary); color: var(--color-text-secondary); margin-bottom: 14px;">Ruh haline göre en iyi yerleri bul</p>
+
+        <form action="/establishments" method="GET" style="margin-bottom: 16px;">
+            <div class="bk-input" style="display: flex; align-items: center; gap: 8px;">
+                <i class="ti ti-search" style="color: var(--color-accent); font-size: 18px;" aria-hidden="true"></i>
+                <input type="text" name="q" placeholder="Kafe, restoran ya da bölge ara" style="border: none; outline: none; background: transparent; flex: 1; font-size: var(--text-secondary); font-family: var(--font-body); color: var(--color-text);">
+            </div>
+        </form>
     </div>
 
-    <!-- MOOD KARTLARI -->
-    <h2 style="margin-bottom: 15px;">Bugün Ne Modundasın?</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 30px;">
-        <a href="/filter?mood=romantik" style="text-decoration: none;">
-            <div class="card" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 32px;">💕</div>
-                <p style="color: #333; margin-top: 8px; font-size: 14px;">Romantik</p>
-            </div>
+    <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 2px;">
+        <a href="/filter?mood=romantik" class="bk-chip bk-chip--active" style="text-decoration: none; flex-shrink: 0;">
+            <i class="ti ti-heart" aria-hidden="true"></i>Randevu gecesi
         </a>
-        <a href="/filter?mood=sakin" style="text-decoration: none;">
-            <div class="card" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 32px;">🧘</div>
-                <p style="color: #333; margin-top: 8px; font-size: 14px;">Sakin</p>
-            </div>
+        <a href="/filter?mood=canlı" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
+            <i class="ti ti-users" aria-hidden="true"></i>Arkadaşlarla
         </a>
-        <a href="/filter?mood=canlı" style="text-decoration: none;">
-            <div class="card" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 32px;">🎉</div>
-                <p style="color: #333; margin-top: 8px; font-size: 14px;">Canlı</p>
-            </div>
+        <a href="/wizard" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
+            <i class="ti ti-wand" aria-hidden="true"></i>Bana yardım et
         </a>
-        <a href="/filter?mood=lüks" style="text-decoration: none;">
-            <div class="card" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 32px;">👑</div>
-                <p style="color: #333; margin-top: 8px; font-size: 14px;">Lüks</p>
-            </div>
-        </a>
-        <a href="/filter?mood=bütçedostu" style="text-decoration: none;">
-            <div class="card" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 32px;">💰</div>
-                <p style="color: #333; margin-top: 8px; font-size: 14px;">Bütçe Dostu</p>
-            </div>
+        <a href="/filter?mood=bütçedostu" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
+            <i class="ti ti-coin" aria-hidden="true"></i>Bütçe dostu
         </a>
     </div>
 
-    <!-- ÖNE ÇIKANLAR -->
-    <h2 style="margin-bottom: 15px;">⭐ Öne Çıkanlar</h2>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <span class="heading" style="font-size: var(--text-title);">Öne çıkanlar</span>
+        <a href="/establishments" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
+    </div>
     @foreach ($featured as $place)
-        <x-establishment-card :place="$place" photo-size="70px" :show-open-status="true" />
+        <x-establishment-card :place="$place" photo-size="80px" :show-open-status="true" />
     @endforeach
 
-    <div style="text-align: center; margin: 20px 0;">
-        <a href="/establishments" class="btn">Tüm İşletmeleri Gör →</a>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin: 20px 0 10px;">
+        <span class="heading" style="font-size: var(--text-title);">
+            <i class="ti ti-flame" style="color: var(--color-accent); font-size: 18px;" aria-hidden="true"></i> Trend mekanlar
+        </span>
+        <a href="/trending" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
     </div>
-
-     <!-- KOLEKSİYONLAR ÖNİZLEME -->
-    <h2 style="margin-bottom: 15px;">📚 Koleksiyonlar</h2>
-    @foreach ($collections as $collection)
-        <a href="/collections/{{ $collection->id }}" style="text-decoration: none;">
-            <div class="card">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="font-size: 32px;">{{ $collection->emoji }}</div>
-                    <div>
-                        <h3 style="font-size: 16px;">{{ $collection->title }}</h3>
-                        <p style="color: #999; font-size: 12px;">{{ $collection->establishments->count() }} mekan</p>
+    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 20px;">
+        @foreach ($trending->take(4) as $place)
+            <a href="/establishments/{{ $place->id }}" style="text-decoration: none; flex-shrink: 0; width: 140px;">
+                <div class="bk-card">
+                    @if ($place->primaryPhoto)
+                        <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: 100%; height: 90px; object-fit: cover;">
+                    @else
+                        <div class="bk-photo-placeholder" style="width: 100%; height: 90px;">
+                            <i class="ti {{ $place->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 22px;" aria-hidden="true"></i>
+                        </div>
+                    @endif
+                    <div style="padding: 8px;">
+                        <p style="font-size: var(--text-meta); font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $place->name }}</p>
+                        <div style="display: flex; align-items: center; gap: 3px;">
+                            <i class="ti ti-star" style="color: var(--color-accent); font-size: 11px;" aria-hidden="true"></i>
+                            <span style="font-size: var(--text-micro); color: var(--color-text-secondary);">{{ $place->rating ?? '-' }}</span>
+                        </div>
                     </div>
                 </div>
+            </a>
+        @endforeach
+    </div>
+
+    <a href="/surprise" style="text-decoration: none;">
+        <div class="bk-card" style="display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 20px; background: var(--color-accent-tint); border: none;">
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--color-surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="ti ti-dice" style="color: var(--color-accent); font-size: 20px;" aria-hidden="true"></i>
             </div>
-        </a>
-    @endforeach
-    <div style="text-align: center; margin: 15px 0 25px;">
-        <a href="/collections" class="btn">Tüm Koleksiyonları Gör →</a>
+            <div style="flex: 1;">
+                <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-accent-text-on-tint); margin-bottom: 2px;">Karar veremedin mi?</p>
+                <p style="font-size: var(--text-meta); color: var(--color-accent-text-on-tint);">Sürpriz Bana ile tek bir öneri al</p>
+            </div>
+            <i class="ti ti-chevron-right" style="color: var(--color-accent-text-on-tint);" aria-hidden="true"></i>
+        </div>
+    </a>
+
+    <a href="/weather" style="text-decoration: none;">
+        <div class="bk-card" style="display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 20px;">
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--color-bg-muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="ti ti-sun" style="color: var(--color-accent); font-size: 20px;" aria-hidden="true"></i>
+            </div>
+            <div style="flex: 1;">
+                <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: 2px;">Bugün hava için öneriler</p>
+                <p style="font-size: var(--text-meta); color: var(--color-text-secondary);">Hava durumuna göre en uygun yerler</p>
+            </div>
+            <i class="ti ti-chevron-right" style="color: var(--color-text-secondary);" aria-hidden="true"></i>
+        </div>
+    </a>
+
+    @if ($collections->isNotEmpty())
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <span class="heading" style="font-size: var(--text-title);">Koleksiyonlar</span>
+            <a href="/collections" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
+        </div>
+        @foreach ($collections as $collection)
+            <a href="/collections/{{ $collection->id }}" style="text-decoration: none;">
+                <div class="bk-card" style="display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 10px;">
+                    <div style="font-size: 26px;">{{ $collection->emoji }}</div>
+                    <div>
+                        <p style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text);">{{ $collection->title }}</p>
+                        <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">{{ $collection->establishments->count() }} mekan</p>
+                    </div>
+                </div>
+            </a>
+        @endforeach
+    @endif
+
+    <div style="margin: 20px 0 10px;">
+        <span class="heading" style="font-size: var(--text-title);">Haritada keşfet</span>
+    </div>
+    <div id="home-map" style="height: 220px; border-radius: var(--radius-card); margin-bottom: 10px;"></div>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="/establishments/map/view" class="bk-btn-secondary" style="display: inline-flex;">Tam haritayı aç</a>
     </div>
 
-    <!-- MİNİ HARİTA -->
-    <h2 style="margin-bottom: 15px;">🗺️ Haritada Keşfet</h2>
-    <div id="home-map" style="height: 250px; border-radius: 8px; margin-bottom: 10px;"></div>
-    <div style="text-align: center; margin-bottom: 25px;">
-        <a href="/establishments/map/view" class="btn">Tam Haritayı Aç →</a>
+    <div class="bk-card" style="display: flex; justify-content: space-around; text-align: center; padding: 14px;">
+        <div>
+            <p style="font-size: 18px; font-weight: var(--weight-medium); color: var(--color-accent);">{{ $stats['establishments'] }}</p>
+            <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">İşletme</p>
+        </div>
+        <div>
+            <p style="font-size: 18px; font-weight: var(--weight-medium); color: var(--color-accent);">{{ $stats['locations'] }}</p>
+            <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Semt</p>
+        </div>
+        <div>
+            <p style="font-size: 18px; font-weight: var(--weight-medium); color: var(--color-accent);">{{ $stats['reviews'] }}</p>
+            <p style="font-size: var(--text-micro); color: var(--color-text-secondary);">Yorum</p>
+        </div>
     </div>
 
-    <!-- İSTATİSTİK ŞERİDİ -->
-    <div class="card" style="display: flex; justify-content: space-around; text-align: center;">
-        <div>
-            <div style="font-size: 24px; font-weight: bold; color: #3498db;">{{ $stats['establishments'] }}</div>
-            <div style="font-size: 12px; color: #999;">İşletme</div>
-        </div>
-        <div>
-            <div style="font-size: 24px; font-weight: bold; color: #3498db;">{{ $stats['locations'] }}</div>
-            <div style="font-size: 12px; color: #999;">Semt</div>
-        </div>
-        <div>
-            <div style="font-size: 24px; font-weight: bold; color: #3498db;">{{ $stats['reviews'] }}</div>
-            <div style="font-size: 12px; color: #999;">Yorum</div>
-        </div>
-    </div>
 @endsection
 @push('scripts')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -107,7 +147,7 @@
 
     const homeMapData = @json($mapData);
     homeMapData.forEach(function(place) {
-        const color = place.type === 'restaurant' ? 'red' : 'green';
+        const color = place.type === 'restaurant' ? '#C1502E' : '#3F7D58';
         const icon = L.divIcon({
             className: 'custom-marker',
             html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>`,

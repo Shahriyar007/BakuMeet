@@ -22,6 +22,7 @@ class HomeController extends Controller
     {
         $featured = $this->service->getFeatured(6);
         $collections = $this->collectionService->getAllCollections()->take(3);
+        $trending = $this->service->getTrending(6);
 
         $mapData = $featured
             ->filter(fn($e) => $e->latitude && $e->longitude)
@@ -45,6 +46,7 @@ class HomeController extends Controller
         return view('home', [
             'featured' => $featured,
             'collections' => $collections,
+            'trending' => $trending,
             'mapData' => $mapData,
             'stats' => $stats,
         ]);
