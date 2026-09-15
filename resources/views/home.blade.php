@@ -31,11 +31,44 @@
         </a>
     </div>
 
+    @if ($featured->isNotEmpty())
+        @php $spotlight = $featured->first(); @endphp
+        <div style="margin-bottom: 10px;">
+            <span class="heading" style="font-size: var(--text-title);">BakuMeet seçtikleri</span>
+        </div>
+        <a href="/establishments/{{ $spotlight->id }}" style="text-decoration: none;">
+            <div class="bk-card" style="margin-bottom: 20px;">
+                @if ($spotlight->primaryPhoto)
+                    <img src="{{ $spotlight->primaryPhoto->url() }}" alt="{{ $spotlight->name }}" style="width: 100%; height: 150px; object-fit: cover;">
+                @else
+                    <div class="bk-photo-placeholder" style="width: 100%; height: 150px;">
+                        <i class="ti {{ $spotlight->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 30px;" aria-hidden="true"></i>
+                    </div>
+                @endif
+                <div style="padding: 14px;">
+                    <p class="heading" style="font-size: 16px; margin-bottom: 8px;">{{ $spotlight->name }}</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <span class="bk-chip">{{ $spotlight->type === 'restaurant' ? 'Restoran' : 'Kafe' }}</span>
+                        @if ($spotlight->price_range)
+                            <span class="bk-chip">{{ str_repeat('₼', $spotlight->price_range) }}</span>
+                        @endif
+                        <span class="bk-chip">
+                            <i class="ti ti-star" style="color: var(--color-accent);" aria-hidden="true"></i>{{ $spotlight->rating ?? '-' }}
+                        </span>
+                    </div>
+                    @if ($spotlight->description)
+                        <div class="bk-reason-box">{{ Str::limit($spotlight->description, 90) }}</div>
+                    @endif
+                </div>
+            </div>
+        </a>
+    @endif
+
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
         <span class="heading" style="font-size: var(--text-title);">Öne çıkanlar</span>
         <a href="/establishments" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
     </div>
-    @foreach ($featured as $place)
+    @foreach ($featured->skip(1) as $place)
         <x-establishment-card :place="$place" photo-size="80px" :show-open-status="true" />
     @endforeach
 
