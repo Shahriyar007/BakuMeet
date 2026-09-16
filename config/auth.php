@@ -19,6 +19,11 @@ return [
             'driver' => 'session',
             'provider' => 'business_accounts',
         ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
     'providers' => [
@@ -30,6 +35,11 @@ return [
         'business_accounts' => [
             'driver' => 'eloquent',
             'model' => \App\Models\BusinessAccount::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Admin::class,
         ],
     ],
 

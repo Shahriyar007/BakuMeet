@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('web')
                 ->prefix('owner')
                 ->group(__DIR__.'/../routes/owner.php');
+
+	    Route::middleware('web')
+                ->prefix('admin')
+                ->group(__DIR__.'/../routes/admin.php');
+
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

@@ -30,6 +30,11 @@ class Establishment extends Model
         'opening_hours' => 'array',
     ];
 
+    public function businessAccount()
+    {
+        return $this->hasOne(\App\Models\BusinessAccount::class);
+    }
+
     public function photos()
     {
         return $this->hasMany(EstablishmentPhoto::class)->orderBy('sort_order');
