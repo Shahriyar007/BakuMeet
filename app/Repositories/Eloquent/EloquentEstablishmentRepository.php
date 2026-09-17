@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Establishment;
 use App\Repositories\Contracts\EstablishmentRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentEstablishmentRepository implements EstablishmentRepositoryInterface
 {
@@ -14,14 +15,23 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
         $this->model = $model;
     }
 
+    /**
+     * Base query with the relations every listing view needs eager-loaded,
+     * to avoid N+1 queries as the establishment count grows.
+     */
+    private function baseQuery(): Builder
+    {
+        return $this->model->with(['primaryPhoto', 'tags']);
+    }
+
     public function all()
     {
-        return $this->model->all();
+        return $this->baseQuery()->get();
     }
 
     public function find(int $id)
     {
-        return $this->model->find($id);
+        return $this->model->with(['photos', 'tags', 'reviews.user'])->find($id);
     }
 
     public function create(array $data)
@@ -31,12 +41,12 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
 
     public function filterByType(string $type)
     {
-        return $this->model->where('type', $type)->get();
+        return $this->baseQuery()->where('type', $type)->get();
     }
 
     public function filterByLocationAndMood(string $location, string $mood)
     {
-        return $this->model
+        return $this->baseQuery()
             ->where('location', $location)
             ->where('mood', $mood)
             ->get();
@@ -44,47 +54,49 @@ class EloquentEstablishmentRepository implements EstablishmentRepositoryInterfac
 
     public function filterByTypeAndMood(string $type, string $mood)
     {
-        return $this->model
+        return $this->baseQuery()
             ->where('type', $type)
             ->where('mood', $mood)
             ->get();
     }
-   public function filterByLocation(string $location)
+
+    public function filterByLocation(string $location)
     {
-        return $this->model->where('location', $location)->get();
+        return $this->baseQuery()->where('location', $location)->get();
     }
 
-   public function filterByMood(string $mood)
+    public function filterByMood(string $mood)
     {
-        return $this->model->where('mood', $mood)->get();
-    }
-   public function getFeatured(int $limit = 6)
-    {
-        return $this->model->orderBy('rating', 'desc')->limit($limit)->get();
+        return $this->baseQuery()->where('mood', $mood)->get();
     }
 
-   public function filterByPriceRange(int $priceRange)
+    public function getFeatured(int $limit = 6)
     {
-        return $this->model->where('price_range', $priceRange)->get();
+        return $this->baseQuery()->orderBy('rating', 'desc')->limit($limit)->get();
     }
 
-   public function getAllWithCoordinates(): \Illuminate\Support\Collection
+    public function filterByPriceRange(int $priceRange)
     {
-        return $this->model->whereNotNull('latitude')
+        return $this->baseQuery()->where('price_range', $priceRange)->get();
+    }
+
+    public function getAllWithCoordinates(): \Illuminate\Support\Collection
+    {
+        return $this->baseQuery()
+            ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->get();
     }
 
-   public function filterByTag(int $tagId): \Illuminate\Support\Collection
+    public function filterByTag(int $tagId): \Illuminate\Support\Collection
     {
-        return $this->model->whereHas('tags', function ($query) use ($tagId) {
+        return $this->baseQuery()->whereHas('tags', function ($query) use ($tagId) {
             $query->where('tags.id', $tagId);
         })->get();
     }
 
-   public function getAllWithCounts(): \Illuminate\Support\Collection
+    public function getAllWithCounts(): \Illuminate\Support\Collection
     {
-        return $this->model->withCount(['reviews', 'favoritedBy'])->get();
+        return $this->baseQuery()->withCount(['reviews', 'favoritedBy'])->get();
     }
-
 }
