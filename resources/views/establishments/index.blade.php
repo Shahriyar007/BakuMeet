@@ -59,10 +59,10 @@
             </div>
         @else
             @foreach ($establishments as $place)
-                <div style="position: relative;">
-                    <label style="position: absolute; top: 10px; left: 10px; z-index: 1; display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: var(--radius-chip); font-size: var(--text-micro); color: var(--color-text-muted);">
+		<div>
+                    <label style="display: inline-flex; align-items: center; gap: 4px; margin: 12px 0 -4px; font-size: var(--text-micro); color: var(--color-text-secondary);">
                         <input type="checkbox" name="ids[]" value="{{ $place->id }}" class="compare-checkbox">
-                        Karşılaştır
+                        Karşılaştırmaya ekle
                     </label>
                     <x-establishment-card
                         :place="$place"
