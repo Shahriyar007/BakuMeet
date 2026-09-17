@@ -73,7 +73,7 @@
             @endif
             <a href="/establishments/{{ $place->id }}" class="bk-btn-secondary" style="display: inline-flex; min-height: auto; padding: 6px 14px; font-size: var(--text-meta);">Detaylar</a>
         </div>
-        <div style="position: relative; flex-shrink: 0;">
+	    <div style="position: relative; flex-shrink: 0; width: {{ $photoSize }};">
             @if ($place->primaryPhoto)
                 <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); object-fit: cover;">
             @elseif ($place->image)
