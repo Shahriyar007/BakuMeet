@@ -24,9 +24,9 @@
                     <i class="ti {{ $place->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" aria-hidden="true"></i>
                     {{ $place->type === 'restaurant' ? 'Restoran' : 'Kafe' }}
                 </span>
-                @if ($showLocation)
-                    <span class="bk-chip">
-                        <i class="ti ti-map-pin" aria-hidden="true"></i>{{ $place->location ?? $place->neighborhood ?? 'Bakı' }}
+		@if ($showLocation)
+                    <span class="bk-chip" style="max-width: 160px; overflow: hidden; text-overflow: ellipsis; display: inline-flex;">
+                        <i class="ti ti-map-pin" style="flex-shrink: 0;" aria-hidden="true"></i><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $place->location ?? $place->neighborhood ?? 'Bakı' }}</span>
                     </span>
                 @endif
                 <span class="bk-chip">{{ $place->mood ?? 'Genel' }}</span>
@@ -34,8 +34,8 @@
                     <span class="bk-chip">{{ str_repeat('₼', $place->price_range) }}</span>
                 @endif
 
-                @if ($showOpenStatus && method_exists($place, 'isOpenNow'))
-                    <span class="bk-chip {{ $place->isOpenNow() ? 'bk-badge--success' : 'bk-badge--danger' }}">
+		@if ($showOpenStatus && method_exists($place, 'isOpenNow'))
+                    <span class="bk-chip {{ $place->isOpenNow() ? 'bk-badge--success' : 'bk-badge--danger' }}" style="white-space: normal; flex-basis: 100%; box-sizing: border-box;">
                         {{ $place->statusText() }}
                     </span>
                 @endif
