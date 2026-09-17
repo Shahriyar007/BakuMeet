@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
     <style>
         body { background: var(--color-bg-muted) !important; }
+        @media (min-width: 768px) {
+            main { max-width: 800px !important; }
+        }
     </style>
 </head>
 <body>

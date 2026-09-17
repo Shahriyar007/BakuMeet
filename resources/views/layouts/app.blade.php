@@ -14,6 +14,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         a { color: inherit; }
         .container { max-width: 480px; margin: 0 auto; padding: 0 16px 90px; }
+	@media (min-width: 768px) {
+            .container { max-width: 720px; }
+        }
         .top-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 16px; background: var(--color-bg); position: sticky; top: 0; z-index: 10;

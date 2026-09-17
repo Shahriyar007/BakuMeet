@@ -9,8 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
-    <style>
+     <style>
         body { background: var(--color-bg-muted) !important; }
+        @media (min-width: 768px) {
+            main { max-width: 720px !important; }
+        }
     </style>
 </head>
 <body>
