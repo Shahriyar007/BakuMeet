@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:business')->group(function () {
     Route::get('/login', [OwnerAuthController::class, 'showLoginForm'])->name('owner.login');
-    Route::post('/login', [OwnerAuthController::class, 'login'])->name('owner.login.attempt');
+    Route::post('/login', [OwnerAuthController::class, 'login'])->middleware('throttle:5,1')->name('owner.login.attempt');
 
     Route::get('/register', [OwnerAuthController::class, 'showRegisterForm'])->name('owner.register');
-    Route::post('/register', [OwnerAuthController::class, 'register'])->name('owner.register.attempt');
+    Route::post('/register', [OwnerAuthController::class, 'register'])->middleware('throttle:5,1')->name('owner.register.attempt');
 });
 
 Route::middleware('auth:business')->group(function () {
