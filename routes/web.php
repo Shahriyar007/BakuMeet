@@ -12,9 +12,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstablishmentController;
 
-Route::get('/sentry-test', function () {
-    throw new \Exception('Sentry bağlantı testi - bu hatayı görüyorsan çalışıyor demektir');
-});
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/giris', function () {

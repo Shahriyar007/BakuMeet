@@ -11,6 +11,7 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.35",
+        "resend/resend-laravel": "^1.4",
         "sentry/sentry-laravel": "^4.27"
     },
     "require-dev": {
