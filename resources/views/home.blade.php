@@ -16,18 +16,22 @@
         </form>
     </div>
 
-    <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 2px;">
-        <a href="/filter?mood=romantik" class="bk-chip bk-chip--active" style="text-decoration: none; flex-shrink: 0;">
-            <i class="ti ti-heart" aria-hidden="true"></i>Randevu gecesi
+   <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+        <a href="/filter?mood=romantik" style="text-decoration: none; background: var(--color-accent-tint); border-radius: var(--radius-card); padding: 14px; display: flex; align-items: center; gap: 10px;">
+            <i class="ti ti-heart" style="font-size: 22px; color: var(--color-accent);" aria-hidden="true"></i>
+            <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-accent-text-on-tint);">Randevu gecesi</span>
         </a>
-        <a href="/filter?mood=canlı" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
-            <i class="ti ti-users" aria-hidden="true"></i>Arkadaşlarla
+        <a href="/filter?mood=canlı" style="text-decoration: none; background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: var(--radius-card); padding: 14px; display: flex; align-items: center; gap: 10px;">
+            <i class="ti ti-users" style="font-size: 22px; color: var(--color-text-muted);" aria-hidden="true"></i>
+            <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text);">Arkadaşlarla</span>
         </a>
-        <a href="/wizard" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
-            <i class="ti ti-wand" aria-hidden="true"></i>Bana yardım et
+        <a href="/wizard" style="text-decoration: none; background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: var(--radius-card); padding: 14px; display: flex; align-items: center; gap: 10px;">
+            <i class="ti ti-wand" style="font-size: 22px; color: var(--color-text-muted);" aria-hidden="true"></i>
+            <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text);">Bana yardım et</span>
         </a>
-        <a href="/filter?mood=bütçedostu" class="bk-chip" style="text-decoration: none; flex-shrink: 0;">
-            <i class="ti ti-coin" aria-hidden="true"></i>Bütçe dostu
+        <a href="/filter?mood=bütçedostu" style="text-decoration: none; background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: var(--radius-card); padding: 14px; display: flex; align-items: center; gap: 10px;">
+            <i class="ti ti-coin" style="font-size: 22px; color: var(--color-text-muted);" aria-hidden="true"></i>
+            <span style="font-size: var(--text-secondary); font-weight: var(--weight-medium); color: var(--color-text);">Bütçe dostu</span>
         </a>
     </div>
 
