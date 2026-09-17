@@ -55,10 +55,13 @@
                     </span>
                 @endif
 
-                @if ($showTags && $place->tags)
-                    @foreach ($place->tags as $tag)
+	       @if ($showTags && $place->tags)
+                    @foreach ($place->tags->take(3) as $tag)
                         <span class="bk-chip">{{ $tag->emoji }} {{ $tag->name }}</span>
                     @endforeach
+                    @if ($place->tags->count() > 3)
+                        <span class="bk-chip">+{{ $place->tags->count() - 3 }}</span>
+                    @endif
                 @endif
             </div>
             <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
