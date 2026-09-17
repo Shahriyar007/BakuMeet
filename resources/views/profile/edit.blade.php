@@ -26,4 +26,8 @@
             @include('profile.partials.delete-user-form')
         </div>
     </div>
+	<form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="bk-btn-secondary" style="width: 100%; color: var(--color-danger); border-color: var(--color-danger);">Çıkış yap</button>
+        </form>
 @endsection
