@@ -45,6 +45,11 @@ class Establishment extends Model
         return $this->hasOne(EstablishmentPhoto::class)->where('is_primary', true);
     }
 
+    public function views()
+    {
+        return $this->hasMany(EstablishmentView::class);
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

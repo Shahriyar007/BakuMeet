@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\EstablishmentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
+use App\Models\EstablishmentView;
 
 class EstablishmentController extends Controller
 {
@@ -26,15 +28,45 @@ class EstablishmentController extends Controller
     /**
      * Işletme detayını göster
      */
-    public function show(int $id)
+    public function show(int $id, Request $request)
     {
         $establishment = $this->service->getEstablishmentById($id);
-        
+
         if (!$establishment) {
             abort(404);
         }
 
+        $this->recordView($establishment, $request);
+
         return view('establishments.show', ['establishment' => $establishment]);
+    }
+
+    /**
+     * Record an anonymous view, deduped per visitor+establishment+day.
+     * Visitor identity is a long-lived random cookie (not the IP alone),
+     * matching how real analytics tools distinguish visitors on shared IPs.
+     */
+    private function recordView($establishment, Request $request): void
+    {
+        $visitorId = $request->cookie('bk_visitor');
+
+        if (! $visitorId) {
+            $visitorId = bin2hex(random_bytes(16));
+            Cookie::queue(Cookie::forever('bk_visitor', $visitorId));
+        }
+
+        $alreadyCountedToday = EstablishmentView::where('establishment_id', $establishment->id)
+            ->where('visitor_id', $visitorId)
+            ->whereDate('viewed_at', now()->toDateString())
+            ->exists();
+
+        if (! $alreadyCountedToday) {
+            EstablishmentView::create([
+                'establishment_id' => $establishment->id,
+                'visitor_id' => $visitorId,
+                'ip_address' => $request->ip(),
+            ]);
+        }
     }
 
     /**
