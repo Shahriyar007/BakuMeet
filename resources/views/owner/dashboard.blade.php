@@ -58,11 +58,43 @@
                         <p style="font-size: 14px; font-weight: var(--weight-medium);">{{ $establishment->reviews_count }}</p>
                         <p style="font-size: 10px; color: var(--color-text-secondary); margin-top: 2px;">Yorum</p>
                     </div>
-                    <div style="flex: 1; background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+		<div style="flex: 1; background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
                         <p style="font-size: 14px; font-weight: var(--weight-medium);">{{ $establishment->favorited_by_count }}</p>
                         <p style="font-size: 10px; color: var(--color-text-secondary); margin-top: 2px;">Favori</p>
                     </div>
                 </div>
+
+                @if ($viewStats)
+                    <p style="font-size: var(--text-meta); font-weight: var(--weight-medium); color: var(--color-text-muted); margin-bottom: 8px;">
+                        <i class="ti ti-eye" aria-hidden="true"></i> Görüntülenme
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px;">
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['today'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Bugün</p>
+                        </div>
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['last_3_days'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Son 3 gün</p>
+                        </div>
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['last_week'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Son 1 hafta</p>
+                        </div>
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['last_month'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Son 1 ay</p>
+                        </div>
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['last_3_months'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Son 3 ay</p>
+                        </div>
+                        <div style="background: var(--color-bg-muted); border-radius: var(--radius-control); padding: 8px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: var(--weight-medium);">{{ $viewStats['total'] }}</p>
+                            <p style="font-size: 9px; color: var(--color-text-secondary); margin-top: 2px;">Toplam</p>
+                        </div>
+                    </div>
+                @endif
             @endif
 
             <div style="display: flex; flex-direction: column; gap: 4px; font-size: var(--text-secondary); color: var(--color-text-muted); margin-bottom: 12px;">
