@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#C1502E">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
