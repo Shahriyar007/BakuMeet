@@ -36,6 +36,7 @@
 </head>
 
 <body>
+<x-splash />
     <header class="top-header">
         <a href="{{ route('home') }}" class="heading" style="font-size: 18px; text-decoration: none;">BakuMeet</a>
         @auth
