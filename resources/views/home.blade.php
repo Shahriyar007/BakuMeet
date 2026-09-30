@@ -43,7 +43,7 @@
         <a href="/establishments/{{ $spotlight->id }}" style="text-decoration: none;">
             <div class="bk-card" style="margin-bottom: 20px;">
                 @if ($spotlight->primaryPhoto)
-                    <img src="{{ $spotlight->primaryPhoto->url() }}" alt="{{ $spotlight->name }}" loading="lazy" style="width: 100%; height: 150px; object-fit: cover;">
+                    <img src="{{ $spotlight->primaryPhoto->url() }}" alt="{{ $spotlight->name }}" fetchpriority="high" style="width: 100%; height: 150px; object-fit: cover;">
                 @else
                     <div class="bk-photo-placeholder" style="width: 100%; height: 150px;">
                         <i class="ti {{ $spotlight->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 30px;" aria-hidden="true"></i>
