@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use Illuminate\Support\Facades\DB;
 use App\Models\EstablishmentPhoto;
 use Illuminate\Support\Facades\Storage;
+use App\Services\PhotoOptimizer;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Establishment;
@@ -182,10 +183,8 @@ class EstablishmentController extends Controller
 
         $file = $request->file('photo');
         $ownerSegment = $establishment ? $establishment->id : 'pending-'.$account->id;
-        $path = 'establishments/'.$ownerSegment.'/'.Str::random(20).'.'.$file->getClientOriginalExtension();
-
         try {
-            Storage::disk('r2')->put($path, file_get_contents($file));
+            $path = app(PhotoOptimizer::class)->store($file, 'establishments/'.$ownerSegment);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
@@ -267,9 +266,7 @@ class EstablishmentController extends Controller
         $hasExistingPrimary = $establishment->photos()->where('is_primary', true)->exists();
 
         foreach ($request->file('photos') as $index => $file) {
-            $path = 'establishments/'.$establishment->id.'/'.Str::random(20).'.'.$file->getClientOriginalExtension();
-
-            Storage::disk('r2')->put($path, file_get_contents($file));
+            $path = app(PhotoOptimizer::class)->store($file, 'establishments/'.$establishment->id);
 
             EstablishmentPhoto::create([
                 'establishment_id' => $establishment->id,
