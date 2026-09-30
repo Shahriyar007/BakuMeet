@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'BakuMeet')</title>
+    <meta name="description" content="@yield('description', 'Bakıdakı restoran və kafeləri məkan və əhval-ruhiyyəyə görə kəşf et. BakuMeet ilə sizə uyğun olan yeri tapın.')">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
