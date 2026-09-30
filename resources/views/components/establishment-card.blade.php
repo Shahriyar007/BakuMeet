@@ -75,9 +75,9 @@
         </div>
 	    <div style="position: relative; flex-shrink: 0; width: {{ $photoSize }};">
             @if ($place->primaryPhoto)
-                <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); object-fit: cover;">
+                <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" loading="lazy" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); object-fit: cover;">
             @elseif ($place->image)
-                <img src="{{ $place->image }}" alt="{{ $place->name }}" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); object-fit: cover;">
+                <img src="{{ $place->image }}" alt="{{ $place->name }}" loading="lazy" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); object-fit: cover;">
             @else
                 <div class="bk-photo-placeholder" style="width: {{ $photoSize }}; height: {{ $photoSize }}; border-radius: var(--radius-photo); font-size: 24px;">
                     <i class="ti {{ $place->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" aria-hidden="true"></i>

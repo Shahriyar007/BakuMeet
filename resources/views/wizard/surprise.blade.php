@@ -15,9 +15,9 @@
         @else
             <div class="bk-card" style="margin-bottom: 16px;">
                 @if ($establishment->primaryPhoto)
-                    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                    <img src="{{ $establishment->primaryPhoto->url() }}" alt="{{ $establishment->name }}" loading="lazy" style="width: 100%; height: 200px; object-fit: cover;">
                 @elseif ($establishment->image)
-                    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                    <img src="{{ $establishment->image }}" alt="{{ $establishment->name }}" loading="lazy" style="width: 100%; height: 200px; object-fit: cover;">
                 @else
                     <div class="bk-photo-placeholder" style="width: 100%; height: 200px;">
                         <i class="ti {{ $establishment->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 36px;" aria-hidden="true"></i>

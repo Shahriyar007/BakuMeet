@@ -43,7 +43,7 @@
         <a href="/establishments/{{ $spotlight->id }}" style="text-decoration: none;">
             <div class="bk-card" style="margin-bottom: 20px;">
                 @if ($spotlight->primaryPhoto)
-                    <img src="{{ $spotlight->primaryPhoto->url() }}" alt="{{ $spotlight->name }}" style="width: 100%; height: 150px; object-fit: cover;">
+                    <img src="{{ $spotlight->primaryPhoto->url() }}" alt="{{ $spotlight->name }}" loading="lazy" style="width: 100%; height: 150px; object-fit: cover;">
                 @else
                     <div class="bk-photo-placeholder" style="width: 100%; height: 150px;">
                         <i class="ti {{ $spotlight->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 30px;" aria-hidden="true"></i>
@@ -87,7 +87,7 @@
             <a href="/establishments/{{ $place->id }}" style="text-decoration: none; flex-shrink: 0; width: 140px;">
                 <div class="bk-card">
                     @if ($place->primaryPhoto)
-                        <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" style="width: 100%; height: 90px; object-fit: cover;">
+                        <img src="{{ $place->primaryPhoto->url() }}" alt="{{ $place->name }}" loading="lazy" style="width: 100%; height: 90px; object-fit: cover;">
                     @else
                         <div class="bk-photo-placeholder" style="width: 100%; height: 90px;">
                             <i class="ti {{ $place->type === 'restaurant' ? 'ti-tools-kitchen-2' : 'ti-coffee' }}" style="font-size: 22px;" aria-hidden="true"></i>

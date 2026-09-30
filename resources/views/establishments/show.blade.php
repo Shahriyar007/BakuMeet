@@ -17,7 +17,7 @@
         @if ($establishment->photos->count() > 1)
             <div id="thumbStrip" style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; -webkit-overflow-scrolling: touch;">
                 @foreach ($establishment->photos as $index => $photo)
-                    <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" data-index="{{ $index }}" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid var(--color-accent);' : '' }}" onclick="showPhoto({{ $index }})">
+                    <img src="{{ $photo->url() }}" alt="{{ $establishment->name }}" data-index="{{ $index }}" loading="lazy" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; cursor: pointer; {{ $photo->is_primary ? 'border: 2px solid var(--color-accent);' : '' }}" onclick="showPhoto({{ $index }})">
                 @endforeach
             </div>
         @endif
