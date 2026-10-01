@@ -70,6 +70,10 @@
 
         @yield('content')
 
+        <p style="text-align: center; margin-top: 24px;">
+            <a href="{{ route('privacy') }}" style="display: inline-block; padding: 8px 12px; font-size: var(--text-meta); color: var(--color-text-secondary);">Məxfilik Siyasəti</a>
+        </p>
+
     </main>
 
     <nav class="bottom-nav-fixed">
