@@ -47,7 +47,7 @@
     <header class="top-header">
         <a href="{{ route('home') }}" class="heading" style="font-size: 18px; text-decoration: none;">BakuMeet</a>
         @auth
-            <a href="{{ route('profile.edit') }}" style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-accent-tint); color: var(--color-accent-text-on-tint); display: flex; align-items: center; justify-content: center; font-weight: var(--weight-medium); font-size: 13px; text-decoration: none;">
+            <a href="{{ route('profile.edit') }}" aria-label="Profil" style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-accent-tint); color: var(--color-accent-text-on-tint); display: flex; align-items: center; justify-content: center; font-weight: var(--weight-medium); font-size: 13px; text-decoration: none;">
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </a>
         @else
@@ -55,7 +55,7 @@
         @endauth
     </header>
 
-    <div class="container">
+    <main class="container">
 
         @if ($errors->any())
             <div class="bk-card" style="background: var(--color-danger-tint); border-color: var(--color-danger); padding: 14px; margin-top: 12px;">
@@ -70,7 +70,7 @@
 
         @yield('content')
 
-    </div>
+    </main>
 
     <nav class="bottom-nav-fixed">
         <div class="bk-bottom-nav">

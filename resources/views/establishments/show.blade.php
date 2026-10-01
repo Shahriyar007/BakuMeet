@@ -42,7 +42,7 @@
                     @php $isFavorited = auth()->user()->favorites()->where('establishment_id', $establishment->id)->exists(); @endphp
                     <form action="/establishments/{{ $establishment->id }}/favorite" method="POST">
                         @csrf
-                        <button type="submit" style="width: 34px; height: 34px; border-radius: 50%; background: {{ $isFavorited ? 'var(--color-accent-tint)' : 'var(--color-bg-muted)' }}; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <button type="submit" aria-label="{{ $isFavorited ? 'Favorilerden çıkar' : 'Favorilere ekle' }}" style="width: 34px; height: 34px; border-radius: 50%; background: {{ $isFavorited ? 'var(--color-accent-tint)' : 'var(--color-bg-muted)' }}; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                             <i class="ti {{ $isFavorited ? 'ti-heart-filled' : 'ti-heart' }}" style="font-size: 16px; color: var(--color-accent);" aria-hidden="true"></i>
                         </button>
                     </form>
