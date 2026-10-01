@@ -21,7 +21,7 @@
 
         <div style="text-align: right; margin-bottom: 18px;">
             @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Şifremi unuttum</a>
+                <a href="{{ route('password.request') }}" style="font-size: var(--text-meta); color: var(--color-accent-text); text-decoration: none;">Şifremi unuttum</a>
             @endif
         </div>
 

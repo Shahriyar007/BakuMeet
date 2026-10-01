@@ -32,11 +32,11 @@
         establishments.forEach(function(place) {
             const icon = L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background-color: ${getMarkerColor(place.type)}; width: 18px; height: 18px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(42,33,27,0.3);"></div>`,
-                iconSize: [18, 18]
+                html: `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;"><div style="background-color: ${getMarkerColor(place.type)}; width: 18px; height: 18px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(42,33,27,0.3);"></div></div>`,
+                iconSize: [24, 24]
             });
 
-            const marker = L.marker([place.latitude, place.longitude], { icon: icon }).addTo(map);
+            const marker = L.marker([place.latitude, place.longitude], { icon: icon, title: place.name }).addTo(map);
             const typeLabel = place.type === 'restaurant' ? 'Restoran' : 'Kafe';
 
             marker.bindPopup(`

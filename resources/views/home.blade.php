@@ -70,7 +70,7 @@
 
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
         <span class="heading" style="font-size: var(--text-title);">Öne çıkanlar</span>
-        <a href="/establishments" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
+        <a href="/establishments" style="font-size: var(--text-meta); color: var(--color-accent-text); text-decoration: none;">Tümünü gör</a>
     </div>
     @foreach ($featured->skip(1) as $place)
         <x-establishment-card :place="$place" photo-size="80px" :show-open-status="true" />
@@ -80,7 +80,7 @@
         <span class="heading" style="font-size: var(--text-title);">
             <i class="ti ti-flame" style="color: var(--color-accent); font-size: 18px;" aria-hidden="true"></i> Trend mekanlar
         </span>
-        <a href="/trending" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
+        <a href="/trending" style="font-size: var(--text-meta); color: var(--color-accent-text); text-decoration: none;">Tümünü gör</a>
     </div>
     <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 20px;">
         @foreach ($trending->take(4) as $place)
@@ -134,7 +134,7 @@
     @if ($collections->isNotEmpty())
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
             <span class="heading" style="font-size: var(--text-title);">Koleksiyonlar</span>
-            <a href="/collections" style="font-size: var(--text-meta); color: var(--color-accent); text-decoration: none;">Tümünü gör</a>
+            <a href="/collections" style="font-size: var(--text-meta); color: var(--color-accent-text); text-decoration: none;">Tümünü gör</a>
         </div>
         @foreach ($collections as $collection)
             <a href="/collections/{{ $collection->id }}" style="text-decoration: none;">
@@ -187,10 +187,10 @@
         const color = place.type === 'restaurant' ? '#C1502E' : '#3F7D58';
         const icon = L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>`,
-            iconSize: [16, 16]
+            html: `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;"><div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div></div>`,
+            iconSize: [24, 24]
         });
-        L.marker([place.latitude, place.longitude], { icon: icon }).addTo(homeMap).bindPopup(place.name);
+        L.marker([place.latitude, place.longitude], { icon: icon, title: place.name }).addTo(homeMap).bindPopup(place.name);
     });
 </script>
 @endpush
